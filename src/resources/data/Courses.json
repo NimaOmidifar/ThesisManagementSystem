@@ -1,0 +1,68 @@
+[
+  {
+    "id" : 1,
+    "title" : "Advanced Programming",
+    "master" : "Reza Moradi",
+    "year" : "1404",
+    "semester" : "first",
+    "capacity" : 5,
+    "resources" : ["Python Programming Book", "Online Course Notes"],
+    "sessions" : 10,
+    "units" : 3
+  },
+  {
+    "id" : 2,
+    "title" : "Database Systems",
+    "master" : "Nima Ghasemi",
+    "year" : "1404",
+    "semester" : "second",
+    "capacity" : 3,
+    "resources" : ["Database Design Textbook", "SQL Tutorial"],
+    "sessions" : 8,
+    "units" : 4
+  },
+  {
+    "id" : 3,
+    "title" : "Data Structures",
+    "master" : "Leila Ahmadi",
+    "year" : "1404",
+    "semester" : "second",
+    "capacity" : 4,
+    "resources" : ["Algorithms and Data Structures Book", "Practice Problems"],
+    "sessions" : 12,
+    "units" : 3
+  },
+  {
+    "id" : 4,
+    "title" : "Artificial Intelligence",
+    "master" : "Mahsa Shafiei",
+    "year" : "1404",
+    "semester" : "first",
+    "capacity" : 2,
+    "resources" : ["AI: A Modern Approach", "Online ML Tutorials"],
+    "sessions" : 15,
+    "units" : 4
+  },
+  {
+    "id" : 5,
+    "title" : "Software Engineering",
+    "master" : "Hossein Jafari",
+    "year" : "1404",
+    "semester" : "first",
+    "capacity" : 7,
+    "resources" : ["Software Engineering Textbook"],
+    "sessions" : 10,
+    "units" : 3
+  },
+  {
+    "id" : 6,
+    "title" : "Machine Learning",
+    "master" : "Reza Moradi",
+    "year" : "1404",
+    "semester" : "second",
+    "capacity" : 2,
+    "resources" : ["Python ML Libraries"],
+    "sessions" : 15,
+    "units" : 4
+  }
+]
