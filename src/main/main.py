@@ -16,5 +16,6 @@ from src.main.Student import Student
 s = Student("9", "8821")
 s.courses_print()
 
-s.take_thesis(5)
+s.take_thesis(3)
 s.status_print()
+s.take_thesis_defense("a", "b", ["c", "d", "e"], "asadsfsf", "fsdfadsfsg", "hfyjfyj")
