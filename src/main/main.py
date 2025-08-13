@@ -1,4 +1,5 @@
 from src.main.LoginAndChangePass import LoginAndChangePass
+from src.main.Master import Master
 from src.main.Student import Student
 
 # m = LoginAndChangePass("9")
@@ -13,9 +14,13 @@ from src.main.Student import Student
 # s.change_password("1111")
 # print(s.login("7513"))
 
-s = Student("9", "8821")
-s.courses_print()
+# s = Student("9", "8821")
+# s.courses_print()
+#
+# s.take_thesis(3)
+# s.status_print()
+# s.take_thesis_defense("a", "b", ["c", "d", "e"], "asadsfsf", "fsdfadsfsg", "hfyjfyj")
 
-s.take_thesis(3)
-s.status_print()
-s.take_thesis_defense("a", "b", ["c", "d", "e"], "asadsfsf", "fsdfadsfsg", "hfyjfyj")
+j = Master(2, "2222")
+j.thesis_requests_print()
+j.thesis_decision(9, False)
