@@ -1,3 +1,4 @@
+from datetime import datetime
 from doctest import master
 
 from src.main.FileManager import FileManager
@@ -46,9 +47,73 @@ class Master:
                 master_obj.file_writer(master_list)
 
 
+    def thesis_defense_decision(self, requester_id, decision = True, ):
+        master_obj = FileManager("../resources/data/Masters.json")
+        master_list = master_obj.file_reader()
+        print("1")
+        for master in master_list:
+            if master["id"] == self.master_id:
+                print("2")
+                request_list = master["defense_requests"]
+                index = 0
+                for request in request_list:
+                    if request["requester_id"] == requester_id:
+                        print("3")
+                        student_obj = FileManager("../resources/data/Students.json")
+                        student_list = student_obj.file_reader()
+                        for student in student_list:
+                            if student["id"] == requester_id:
+                                print("4")
+                                if decision:
+                                    student["defense_request"]["status"] = "accepted"
+                                    print("5")
 
 
+                                else:
+                                    print("6")
+                                    student["defense_request"]["status"] = "rejected"
 
+                                    defense_obj = FileManager("../resources/data/Defenses.json")
+                                    defense_list = defense_obj.file_reader()
+                                    defense_list_copy = defense_list.copy()
+                                    defense_index = 0
+                                    for defense in defense_list_copy:
+                                        if defense["id"] == master["defense_requests"][index]["defense_id"]:
+                                            defense_list.remove(defense_list[defense_index])
+                                            break
+                                        defense_index += 1
+
+                                    master["defense_requests"].remove(master["defense_requests"][index])
+                                    master_obj.file_writer(master_list)
+
+                                    defense_obj.file_writer(defense_list)
+                                student_obj.file_writer(student_list)
+
+                index += 1
+
+    def choose_examiner(self, internal_examiner, external_examiner, date):
+        defense_date = datetime.strptime(date, "%d/%m/%Y").date()
+        now = datetime.now().date()
+
+        if defense_date > now:
+            master_obj = FileManager("../resources/data/Masters.json")
+            master_list = master_obj.file_reader()
+            for master in master_list:
+                if master["name"] == internal_examiner:
+                    if master["capacity"]["examiner"] != 0:
+                        master["capacity"]["examiner"] = master["capacity"]["examiner"] - 1
+
+                        dic = {
+
+                        }
+
+                    else:
+                        print("The internal master is busy.")
+                else:
+                    print("There is no such internal master.")
+
+        else:
+            print("Invalid date.")
 
     def thesis_requests_print(self):
         student_name = ""
@@ -83,3 +148,39 @@ class Master:
             print(f"student name: {student_name}\ncourse title: {course_title}\nrequest date: {request_date}")
             print("------------------------------------")
 
+    def thesis_defense_requests_print(self):
+        title = ""
+        abstract = ""
+        keywords = None
+        pdf_path = ""
+        first_page_path = ""
+        last_page_path = ""
+        date = ""
+
+        master_obj = FileManager("../resources/data/Masters.json")
+        master_list = master_obj.file_reader()
+        for master in master_list:
+            if master["id"] == self.master_id:
+                if not master["defense_requests"]:
+                    break
+
+            defense_obj = FileManager("../resources/data/Defenses.json")
+            defense_list = defense_obj.file_reader()
+            for request in master["defense_requests"]:
+                for defense in defense_list:
+                    if defense["id"] == request["defense_id"]:
+                        title = defense["title"]
+                        abstract = defense["abstract"]
+                        keywords = defense["keywords"]
+                        pdf_path = defense["pdf_path"]
+                        first_page_path = defense["first_page_path"]
+                        last_page_path = defense["last_page_path"]
+                        date = defense["date"]
+
+                        print(f"title: {title}\nabstract: {abstract}\nkeywords: ", end="")
+                        for _ in keywords:
+                            print(f"{_}, ", end="")
+                        print(f"\ndate: {date}")
+                        print("-------------------------------------------")
+
+                        break

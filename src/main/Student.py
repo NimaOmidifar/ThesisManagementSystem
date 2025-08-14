@@ -86,13 +86,14 @@ class Student:
 
                             student["defense_request"]["status"] = "pending"
                             student["defense_request"]["date"] = date_now_str
+                            student["defense_request"]["defense_id"] = defense_id
                             student_obj.file_writer(student_list)
 
                             master_obj = FileManager("../resources/data/Masters.json")
                             master_list = master_obj.file_reader()
                             for master in master_list:
                                 if master["id"] == student["thesis_request"]["master_id"]:
-                                    master["defense_requests"].append({"requester_id": self.student_id, "date": date_now_str})
+                                    master["defense_requests"].append({"requester_id": self.student_id, "date": date_now_str, "defense_id": defense_id})
                                     master_obj.file_writer(master_list)
                                     break
 
@@ -111,13 +112,13 @@ class Student:
                 print(f"date: {student['thesis_request']['date']}\nstatus: {student['thesis_request']['status']}")
                 break
 
-    def courses_print(self):
+    def get_courses(self):
         course_obj = FileManager("../resources/data/Courses.json")
         course_list = course_obj.file_reader()
-
-        for course in course_list:
-            print(f"id: {course['id']}\ntitle: {course['title']}\nmaster: {course['master']}\nyear: {course['year']}\nsemester: {course['semester']}\ncapacity: {course['capacity']}")
-            for _ in course['resources']:
-                print(_, end = ", ")
-            print(f"\nsessions: {course['sessions']}\nunits: {course['units']}")
-            print("-----------------------------------")
+        return course_list
+        # for course in course_list:
+        #     print(f"id: {course['id']}\ntitle: {course['title']}\nmaster: {course['master']}\nyear: {course['year']}\nsemester: {course['semester']}\ncapacity: {course['capacity']}")
+        #     for _ in course['resources']:
+        #         print(_, end = ", ")
+        #     print(f"\nsessions: {course['sessions']}\nunits: {course['units']}")
+        #     print("-----------------------------------")

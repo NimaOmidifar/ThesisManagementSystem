@@ -1,3 +1,4 @@
+from src.main.GUI import GUI
 from src.main.LoginAndChangePass import LoginAndChangePass
 from src.main.Master import Master
 from src.main.Student import Student
@@ -21,6 +22,11 @@ from src.main.Student import Student
 # s.status_print()
 # s.take_thesis_defense("a", "b", ["c", "d", "e"], "asadsfsf", "fsdfadsfsg", "hfyjfyj")
 
-j = Master(2, "2222")
-j.thesis_requests_print()
-j.thesis_decision(9, False)
+# j = Master(2, "2222")
+# j.thesis_requests_print()
+# j.thesis_decision(9)
+
+# j.thesis_defense_requests_print()
+# j.thesis_defense_decision(9, False)
+
+gui = GUI()

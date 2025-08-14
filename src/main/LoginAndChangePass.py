@@ -3,21 +3,22 @@ from src.main.FileManager import FileManager
 
 class LoginAndChangePass:
 
-    def __init__(self, user_id, user = "student"):
-        self.user_id = user_id
-        self.user = user
+    def __init__(self, user_id):
+        self.user_id = int(user_id)
 
-    def login(self, password):
+    def login(self, password, user = "student"):
+        global name
         file_obj = None
-        if self.user == "student":
+        if user == "student":
             file_obj = FileManager("../resources/data/Students.json")
-        elif self.user == "master":
+        elif user == "master":
             file_obj = FileManager("../resources/data/Masters.json")
         user_list = file_obj.file_reader()
 
-        for user in user_list:
-            if user["id"] == self.user_id:
-                if user["password"] == password:
+        for users in user_list:
+            if users["id"] == self.user_id:
+                if users["password"] == password:
+                    name = users["name"]
                     return True
 
                 return False
@@ -25,17 +26,21 @@ class LoginAndChangePass:
         return False
 
 
-    def change_password(self, new_password):
+    def change_password(self, new_password, user = "student"):
         file_obj = None
-        if self.user == "student":
+        if user == "student":
             file_obj = FileManager("../resources/data/Students.json")
-        elif self.user == "master":
+        elif user == "master":
             file_obj = FileManager("../resources/data/Masters.json")
         user_list = file_obj.file_reader()
 
-        for user in user_list:
-            if user["id"] == self.user_id:
-                user["password"] = new_password
-                print("Successfully changed password.")
+        for users in user_list:
+            if users["id"] == self.user_id:
+                users["password"] = new_password
+                file_obj.file_writer(user_list)
+                return True
 
-        file_obj.file_writer(user_list)
+        return False
+
+    def get_name(self):
+        return name
