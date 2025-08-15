@@ -24,8 +24,7 @@ class Student:
                     for student in student_list:
                         if student["id"] == self.student_id:
                             if student["thesis_request"]["status"] in ["pending", "accepted"]:
-                                print("You reserved an unit before.")
-                                break
+                                return "You reserved an unit before."
 
                             capacity -= 1
                             course["capacity"] = capacity
@@ -47,12 +46,9 @@ class Student:
                                     master_file.file_writer(master_list)
                                     break
 
-                            print("The unit was successfully reserved.")
-                            break
-                else:
-                    print("The course is full.")
-
-                break
+                            return "The course was successfully reserved."
+                return "The course is full."
+        return "There is no course with that ID."
 
     def take_thesis_defense(self, title, abstract, keywords, pdf_path, first_page_path, last_page_path):
         student_obj = FileManager("../resources/data/Students.json")
@@ -109,13 +105,12 @@ class Student:
         student_list = student_file.file_reader()
         for student in student_list:
             if student["id"] == self.student_id:
-                print(f"date: {student['thesis_request']['date']}\nstatus: {student['thesis_request']['status']}")
-                break
+                return student['thesis_request']['date'], student['thesis_request']['status']
 
-    def get_courses(self):
-        course_obj = FileManager("../resources/data/Courses.json")
-        course_list = course_obj.file_reader()
-        return course_list
+    # def get_courses(self):
+    #     course_obj = FileManager("../resources/data/Courses.json")
+    #     course_list = course_obj.file_reader()
+    #     return course_list
         # for course in course_list:
         #     print(f"id: {course['id']}\ntitle: {course['title']}\nmaster: {course['master']}\nyear: {course['year']}\nsemester: {course['semester']}\ncapacity: {course['capacity']}")
         #     for _ in course['resources']:

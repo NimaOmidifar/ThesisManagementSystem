@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from unittest.mock import right
 
 from PIL import Image, ImageTk
@@ -127,7 +128,7 @@ class GUI():
             if login.login(password):
                 name = login.get_name()
                 student = Student(id, password)
-                self.student_page(name)
+                self.student_page(name, student)
 
             elif login.login(password, "master"):
                 name = login.get_name()
@@ -142,13 +143,16 @@ class GUI():
 
         root.mainloop()
 
-    def student_page(self, name):
+    def student_page(self, name, student_object):
         WIDTH = 950
         HEIGHT = 650
+        ENTRY_WIDTH = 300
+        ENTRY_HEIGHT = 40
         LEFT_COLOR = "#0C2D48"
         RIGHT_COLOR = "#081D2B"
         LINE_COLOR = "#99FFFF"
         BTN_COLOR = "#2E8BC0"
+        INPUT_COLOR = "#0C2D48"
 
         student_form = tk.Tk()
         student_form.title('Student Page')
@@ -174,8 +178,14 @@ class GUI():
         student_label.place(x=85, y=155)
 
         def courses_btn_action():
-            canvas = tk.Canvas(right_frame, bg=RIGHT_COLOR, highlightthickness=0)
-            scrollbar = tk.Scrollbar(right_frame, orient="vertical", command=canvas.yview)
+            take_thesis_frame.place_forget()
+            course_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            courses_btn.config(bg=RIGHT_COLOR)
+            take_thesis_btn.config(bg=BTN_COLOR)
+
+
+            canvas = tk.Canvas(course_frame, bg=RIGHT_COLOR, highlightthickness=0)
+            scrollbar = tk.Scrollbar(course_frame, orient="vertical", command=canvas.yview)
             scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
 
             scrollable_frame.bind(
@@ -201,11 +211,45 @@ class GUI():
         courses_btn = tk.Button(left_frame, text="Courses", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=courses_btn_action)
         courses_btn.place(x=0, y=260, width=228, height=60)
 
-        def take_thesis_action():
-            pass
-
         first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
         first_line_between.place(x=0, y=320)
+
+        def take_thesis_action():
+            for widget in course_frame.winfo_children():
+                widget.destroy()
+            take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            take_thesis_btn.config(bg=RIGHT_COLOR)
+            courses_btn.config(bg=BTN_COLOR)
+
+            thesis_id_label = tk.Label(take_thesis_frame, text="Thesis id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            thesis_id_label.place(x=65, y=114)
+            thesis_id_entry = tk.Entry(take_thesis_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            thesis_id_entry.place(x=135, y=105, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            left_line = tk.Canvas(take_thesis_frame, width=60, height=2, bg=LINE_COLOR, highlightthickness=0)
+            left_line.place(x=15, y=205)
+
+            thesis_id_label = tk.Label(take_thesis_frame, text="Request history", font=("Arial", 14), bg=RIGHT_COLOR, fg="white")
+            thesis_id_label.place(x=65, y=190)
+
+            right_line = tk.Canvas(take_thesis_frame, width=495, height=2, bg=LINE_COLOR, highlightthickness=0)
+            right_line.place(x=205, y=205)
+
+            status_tuple = student_object.status_print()
+            date_label = tk.Label(take_thesis_frame, text=f"Request date: {status_tuple[0]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            date_label.place(x=65, y=250)
+            status_label = tk.Label(take_thesis_frame, text=f"Status: {status_tuple[1]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            status_label.place(x=65, y=280)
+
+            def send_request_action():
+                input_id = thesis_id_entry.get().strip()
+                message = student_object.take_thesis(input_id)
+
+                message_label = tk.Label(take_thesis_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                message_label.place(x=220, y=430)
+
+            send_request_btn = tk.Button(take_thesis_frame, text="Send request", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=send_request_action)
+            send_request_btn.place(x=65, y=500, width=228, height=60)
 
         take_thesis_btn = tk.Button(left_frame, text="Take thesis", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=take_thesis_action)
         take_thesis_btn.place(x=0, y=322, width=228, height=60)
@@ -213,7 +257,92 @@ class GUI():
         second_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
         second_line_between.place(x=0, y=382)
 
-        take_thesis_defense_btn = tk.Button(left_frame, text="take thesis defense", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2")
+        def take_thesis_defense_action():
+            for widget in course_frame.winfo_children():
+                widget.destroy()
+            take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            take_thesis_defense_btn.config(bg=RIGHT_COLOR)
+            courses_btn.config(bg=BTN_COLOR)
+            take_thesis_btn.config(bg=BTN_COLOR)
+
+            title_label = tk.Label(take_thesis_defense_frame, text="Title:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            title_label.place(x=65, y=44)
+            title_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            title_entry.place(x=135, y=35, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            abstract_label = tk.Label(take_thesis_defense_frame, text="Abstract:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            abstract_label.place(x=65, y=99)
+            abstract_entry = tk.Text(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            abstract_entry.place(x=135, y=90, width=ENTRY_WIDTH, height=ENTRY_HEIGHT * 3)
+
+            keyword_label = tk.Label(take_thesis_defense_frame, text="keywords:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            keyword_label.place(x=65, y=234)
+            keyword_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            keyword_entry.place(x=135, y=225, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            pdf_path_label = tk.Label(take_thesis_defense_frame, text="pdf path:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            pdf_path_label.place(x=65, y=289)
+            pdf_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            pdf_path_entry.place(x=135, y=280, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            def pdf_path_browse_action():
+                pdf_path = filedialog.askopenfilename(
+                    title="Select a file",
+                    filetypes=[("PDF files", "*.pdf")]
+                )
+
+                if pdf_path:
+                    pdf_path_entry.delete(0, tk.END)
+                    pdf_path_entry.insert(0, pdf_path)
+
+            pdf_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=pdf_path_browse_action)
+            pdf_path_browse_btn.place(x=450, y=280, width=80, height=ENTRY_HEIGHT)
+
+            first_page_path_label = tk.Label(take_thesis_defense_frame, text="First page path:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            first_page_path_label.place(x=65, y=344)
+            first_page_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            first_page_path_entry.place(x=135, y=335, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            def first_page_path_browse_action():
+                first_page_path = filedialog.askopenfilename(
+                    title="Select a file",
+                    filetypes=[("Image files", "*.png;*.jpg;*.jpeg")]
+                )
+
+                if first_page_path:
+                    first_page_path_entry.delete(0, tk.END)
+                    first_page_path_entry.insert(0, first_page_path)
+
+            first_page_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=first_page_path_browse_action)
+            first_page_path_browse_btn.place(x=450, y=335, width=80, height=ENTRY_HEIGHT)
+
+            last_page_path_label = tk.Label(take_thesis_defense_frame, text="Last page path:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            last_page_path_label.place(x=65, y=399)
+            last_page_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            last_page_path_entry.place(x=135, y=390, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            def last_page_path_browse_action():
+                last_page_path = filedialog.askopenfilename(
+                    title="Select a file",
+                    filetypes=[("Image files", "*.png;*.jpg;*.jpeg")]
+                )
+
+                if last_page_path:
+                    last_page_path_entry.delete(0, tk.END)
+                    last_page_path_entry.insert(0, last_page_path)
+
+            last_page_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=last_page_path_browse_action)
+            last_page_path_browse_btn.place(x=450, y=390, width=80, height=ENTRY_HEIGHT)
+
+            def send_request_action():
+                pass
+
+            send_request_btn = tk.Button(take_thesis_defense_frame, text="Send request", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=send_request_action)
+            send_request_btn.place(x=65, y=550, width=228, height=60)
+
+
+
+        take_thesis_defense_btn = tk.Button(left_frame, text="take thesis defense", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=take_thesis_defense_action)
         take_thesis_defense_btn.place(x=0, y=384, width=228, height=60)
 
         # img = tk.PhotoImage(file="../resources/picture/usericon.png")
@@ -232,9 +361,17 @@ class GUI():
         # except Exception as e:
         #     print(f"Error: {e}")
 
-        # -----------------------right frame--------------------------------
+        # -----------------------right frames--------------------------------
         right_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
         right_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+
+        course_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
+
+        take_thesis_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
+        take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+
+        take_thesis_defense_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
+        take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
 
 
 
