@@ -10,24 +10,33 @@ class Master:
         self.password = password
 
     def thesis_decision(self, requester_id, decision = True):
+        requester_id = int(requester_id)
         master_obj = FileManager("../resources/data/Masters.json")
         master_list = master_obj.file_reader()
         request_list = None
         for master in master_list:
             if master["id"] == self.master_id:
                 request_list = master["thesis_requests"]
-                index = 0
-                for request in request_list:
+                for index, request in enumerate(request_list):
+                    print(request["requester_id"])
+                    print(requester_id)
                     if request["requester_id"] == requester_id:
+                        print(2)
                         master["thesis_requests"].remove(master["thesis_requests"][index])
 
                         student_obj = FileManager("../resources/data/Students.json")
                         student_list = student_obj.file_reader()
                         for student in student_list:
                             if student["id"] == requester_id:
+                                print(3)
                                 if decision:
+                                    print(4)
                                     student["thesis_request"]["status"] = "accepted"
+                                    student_obj.file_writer(student_list)
+                                    master_obj.file_writer(master_list)
+                                    return "The student was accepted."
                                 else:
+                                    print(5)
                                     student["thesis_request"]["status"] = "rejected"
 
                                     master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
@@ -36,15 +45,14 @@ class Master:
                                     course_list = course_obj.file_reader()
                                     for course in course_list:
                                         if course["id"] == student["thesis_request"]["course_id"]:
+                                            print(6)
                                             course["capacity"] = course["capacity"] + 1
                                             course_obj.file_writer(course_list)
-                                            break
+                                            student_obj.file_writer(student_list)
+                                            master_obj.file_writer(master_list)
+                                            return "The student was rejected."
+                return "There is no student with that ID."
 
-                                student_obj.file_writer(student_list)
-                                break
-                        break
-                    index += 1
-                master_obj.file_writer(master_list)
 
 
     def thesis_defense_decision(self, requester_id, decision = True, ):
@@ -116,9 +124,11 @@ class Master:
             print("Invalid date.")
 
     def thesis_requests_print(self):
+        student_id = ""
         student_name = ""
         request_date = ""
         course_title = ""
+        final_list = []
 
         master_obj = FileManager("../resources/data/Masters.json")
         master_list = master_obj.file_reader()
@@ -133,6 +143,7 @@ class Master:
                 for request in master["thesis_requests"]:
                     for student in student_list:
                         if student["id"] == request["requester_id"]:
+                            student_id = student["id"]
                             student_name = student["name"]
                             request_date = student["thesis_request"]["date"]
 
@@ -141,14 +152,17 @@ class Master:
                             for course in course_list:
                                 if course["id"] == student["thesis_request"]["course_id"]:
                                     course_title = course["title"]
+                                    sub_tuple = (request_date, course_title, student_name, student_id)
+                                    final_list.append(sub_tuple)
                                     break
                             break
 
         if student_name:
-            print(f"student name: {student_name}\ncourse title: {course_title}\nrequest date: {request_date}")
-            print("------------------------------------")
+            return final_list
 
     def thesis_defense_requests_print(self):
+        student_id = ""
+        student_name = ""
         title = ""
         abstract = ""
         keywords = None
@@ -156,31 +170,30 @@ class Master:
         first_page_path = ""
         last_page_path = ""
         date = ""
+        final_list = []
 
         master_obj = FileManager("../resources/data/Masters.json")
         master_list = master_obj.file_reader()
         for master in master_list:
             if master["id"] == self.master_id:
                 if not master["defense_requests"]:
-                    break
+                    return final_list
 
             defense_obj = FileManager("../resources/data/Defenses.json")
             defense_list = defense_obj.file_reader()
             for request in master["defense_requests"]:
                 for defense in defense_list:
                     if defense["id"] == request["defense_id"]:
+                        student_id = defense["student_id"]
+                        student_name = defense["student_name"]
                         title = defense["title"]
                         abstract = defense["abstract"]
                         keywords = defense["keywords"]
-                        pdf_path = defense["pdf_path"]
-                        first_page_path = defense["first_page_path"]
-                        last_page_path = defense["last_page_path"]
+                        pdf_path = defense["pdf_name"]
+                        first_page_path = defense["first_page_name"]
+                        last_page_path = defense["last_page_name"]
                         date = defense["date"]
+                        sub_tuple = (student_id, student_name, title, abstract, keywords, pdf_path, first_page_path, last_page_path, date)
+                        final_list.append(sub_tuple)
 
-                        print(f"title: {title}\nabstract: {abstract}\nkeywords: ", end="")
-                        for _ in keywords:
-                            print(f"{_}, ", end="")
-                        print(f"\ndate: {date}")
-                        print("-------------------------------------------")
-
-                        break
+                        return final_list

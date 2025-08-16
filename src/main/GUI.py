@@ -1,8 +1,10 @@
 import tkinter as tk
+from doctest import master
 from tkinter import filedialog
 from unittest.mock import right
 
 from PIL import Image, ImageTk
+from pyexpat.errors import messages
 
 from src.main.FileManager import FileManager
 from src.main.LoginAndChangePass import LoginAndChangePass
@@ -133,6 +135,7 @@ class GUI():
             elif login.login(password, "master"):
                 name = login.get_name()
                 master = Master(id, password)
+                self.master_page(name, master)
             else:
                 warn_label = tk.Label(login_frame, text="There is no such user!", font=("Arial", 11), bg=FORM_COLOR,fg="red")
                 warn_label.place(x=125, y=310)
@@ -179,9 +182,11 @@ class GUI():
 
         def courses_btn_action():
             take_thesis_frame.place_forget()
+            take_thesis_defense_frame.place_forget()
             course_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             courses_btn.config(bg=RIGHT_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
+            take_thesis_defense_btn.config(bg=BTN_COLOR)
 
 
             canvas = tk.Canvas(course_frame, bg=RIGHT_COLOR, highlightthickness=0)
@@ -217,9 +222,11 @@ class GUI():
         def take_thesis_action():
             for widget in course_frame.winfo_children():
                 widget.destroy()
+            take_thesis_defense_frame.place_forget()
             take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
+            take_thesis_defense_btn.config(bg=BTN_COLOR)
 
             thesis_id_label = tk.Label(take_thesis_frame, text="Thesis id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
             thesis_id_label.place(x=65, y=114)
@@ -260,6 +267,7 @@ class GUI():
         def take_thesis_defense_action():
             for widget in course_frame.winfo_children():
                 widget.destroy()
+            take_thesis_frame.place_forget()
             take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_defense_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
@@ -334,11 +342,36 @@ class GUI():
             last_page_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=last_page_path_browse_action)
             last_page_path_browse_btn.place(x=450, y=390, width=80, height=ENTRY_HEIGHT)
 
+            left_line = tk.Canvas(take_thesis_defense_frame, width=60, height=2, bg=LINE_COLOR, highlightthickness=0)
+            left_line.place(x=15, y=460)
+
+            thesis_id_label = tk.Label(take_thesis_defense_frame, text="Request history", font=("Arial", 14), bg=RIGHT_COLOR, fg="white")
+            thesis_id_label.place(x=65, y=445)
+
+            right_line = tk.Canvas(take_thesis_defense_frame, width=495, height=2, bg=LINE_COLOR, highlightthickness=0)
+            right_line.place(x=205, y=460)
+
+            status_tuple = student_object.status_print("thesis_defense")
+            date_label = tk.Label(take_thesis_defense_frame, text=f"Request date: {status_tuple[0]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            date_label.place(x=65, y=480)
+            status_label = tk.Label(take_thesis_defense_frame, text=f"Status: {status_tuple[1]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            status_label.place(x=65, y=505)
+
             def send_request_action():
-                pass
+                title = title_entry.get().strip()
+                abstract = abstract_entry.get("1.0", tk.END).strip()
+                keywords = keyword_entry.get().strip()
+                pdf_path = pdf_path_entry.get().strip()
+                first_page_path = first_page_path_entry.get().strip()
+                last_page_path = last_page_path_entry.get().strip()
+
+                message = student_object.take_thesis_defense(title, abstract, keywords, pdf_path, first_page_path, last_page_path)
+
+                message_label = tk.Label(take_thesis_defense_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,fg="white")
+                message_label.place(x=65, y=570)
 
             send_request_btn = tk.Button(take_thesis_defense_frame, text="Send request", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=send_request_action)
-            send_request_btn.place(x=65, y=550, width=228, height=60)
+            send_request_btn.place(x=450, y=550, width=228, height=60)
 
 
 
@@ -374,4 +407,444 @@ class GUI():
         take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
 
 
+    def master_page(self, name, master_object):
+        WIDTH = 950
+        HEIGHT = 650
+        ENTRY_WIDTH = 300
+        ENTRY_HEIGHT = 40
+        LEFT_COLOR = "#0C2D48"
+        RIGHT_COLOR = "#081D2B"
+        LINE_COLOR = "#99FFFF"
+        BTN_COLOR = "#2E8BC0"
+        INPUT_COLOR = "#0C2D48"
 
+        master_form = tk.Tk()
+        master_form.title('Master Page')
+
+        screen_width = master_form.winfo_screenwidth()
+        screen_height = master_form.winfo_screenheight()
+        x = (screen_width - WIDTH) // 2
+        y = (screen_height - HEIGHT) // 2
+        master_form.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
+        master_form.resizable(False, False)
+
+        # -----------------------left frame--------------------------------
+        left_frame = tk.Frame(master_form, bg=LEFT_COLOR)
+        left_frame.place(x=0, y=0, width=230, height=HEIGHT)
+
+        right_line = tk.Canvas(left_frame, width=2, height=HEIGHT, bg=LINE_COLOR, highlightthickness=0)
+        right_line.place(x=228, y=0)
+
+        name_label = tk.Label(left_frame, text=name, font=("Arial", 11), bg=LEFT_COLOR, fg="white")
+        name_label.place(x=60, y=130)
+
+        master_label = tk.Label(left_frame, text="Master", font=("Arial", 8), bg=LEFT_COLOR, fg="white")
+        master_label.place(x=85, y=155)
+
+        def thesis_request_btn_action():
+            # for widget in thesis_defense_request_frame.winfo_children():
+            #     widget.destroy()
+            thesis_defense_request_frame.place_forget()
+            thesis_request_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            thesis_request_btn.config(bg=RIGHT_COLOR)
+            # take_thesis_btn.config(bg=BTN_COLOR)
+            thesis_defense_request_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(thesis_request_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600, height=300)
+            scrollbar = tk.Scrollbar(thesis_request_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            request_list = master_object.thesis_requests_print()
+            for request in request_list:
+                tk.Label(scrollable_frame, width=90, text=f"Student id: {request[3]}\nStudent name: {request[2]}\nCourse name: {request[1]}\nDate: {request[0]}", font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx= 15, pady=7)
+
+
+            student_id_label = tk.Label(thesis_request_frame, text="Student id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            student_id_label.place(x=65, y=399)
+            student_id_entry = tk.Entry(thesis_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            student_id_entry.place(x=140, y=390, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            var = tk.StringVar(value="")
+            tk.Radiobutton(thesis_request_frame, text="Accept", variable=var, value="accept", bg=RIGHT_COLOR, fg="white", selectcolor=RIGHT_COLOR, activebackground=RIGHT_COLOR, cursor="hand2").place(x=450, y=400, width=60, height=20)
+            tk.Radiobutton(thesis_request_frame, text="Reject", variable=var, value="accept", bg=RIGHT_COLOR, fg="white", selectcolor=RIGHT_COLOR, activebackground=RIGHT_COLOR, cursor="hand2").place(x=560, y=400, width=60, height=20)
+
+            def submit_btn_action():
+                student_id = student_id_entry.get()
+                print(var.get())
+                if var.get() == "accept":
+                    print(True)
+                elif var.get() == "reject":
+                    print(False)
+                # message = master_object.thesis_decision(student_id, var.get())
+                # message_label = tk.Label(thesis_request_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                # message_label.place(x=65, y=520)
+
+            submit_btn = tk.Button(thesis_request_frame, text="Submit", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=submit_btn_action)
+            submit_btn.place(x=420, y=500, width=228, height=60)
+
+        thesis_request_btn = tk.Button(left_frame, text="Thesis requests", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0,
+                                highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                command=thesis_request_btn_action)
+        thesis_request_btn.place(x=0, y=260, width=228, height=60)
+
+        first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        first_line_between.place(x=0, y=320)
+
+        def thesis_defense_request_btn_action():
+            # for widget in thesis_request_frame.winfo_children():
+            #     widget.destroy()
+            thesis_request_frame.place_forget()
+            thesis_defense_request_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            thesis_defense_request_btn.config(bg=RIGHT_COLOR)
+            thesis_request_btn.config(bg=BTN_COLOR)
+            # take_thesis_defense_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(thesis_defense_request_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600, height=300)
+            scrollbar = tk.Scrollbar(thesis_defense_request_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            request_list = master_object.thesis_defense_requests_print()
+            for request in request_list:
+                tk.Label(scrollable_frame, width=90, text=f"Student id: {request[0]}\nStudent name: {request[1]}\nTitle: {request[2]}\nAbstract: {request[3]}\nKeyword: {request[4]}\nDate: {request[8]}", font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx= 15, pady=7)
+
+
+            student_id_label = tk.Label(thesis_defense_request_frame, text="Student id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            student_id_label.place(x=65, y=399)
+            student_id_entry = tk.Entry(thesis_defense_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            student_id_entry.place(x=140, y=390, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+
+            var = tk.StringVar(value="")
+            tk.Radiobutton(thesis_defense_request_frame, text="Accept", variable=var, value="accept", bg=RIGHT_COLOR, fg="white", selectcolor=RIGHT_COLOR, activebackground=RIGHT_COLOR, cursor="hand2").place(x=450, y=400, width=60, height=20)
+            tk.Radiobutton(thesis_defense_request_frame, text="Reject", variable=var, value="accept", bg=RIGHT_COLOR, fg="white", selectcolor=RIGHT_COLOR, activebackground=RIGHT_COLOR, cursor="hand2").place(x=560, y=400, width=60, height=20)
+
+            def open_pdf_btn_action():
+                if student_id_entry.get() == "":
+                    warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                    warn_label.place(x=65, y=540)
+                else:
+                    student_id = int(student_id_entry.get().strip())
+                    flag = False
+                    for request in request_list:
+                        if request[0] == student_id:
+                            flag = True
+                            file = FileManager(request[5])
+                            file.open_file()
+                            break
+                    if not flag:
+                        warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                        warn_label.place(x=65, y=540)
+
+
+            open_pdf_btn = tk.Button(thesis_defense_request_frame, text="Open pdf", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_pdf_btn_action)
+            open_pdf_btn.place(x=140, y=450, width=80, height=40)
+
+            def open_first_page_btn_action():
+                if student_id_entry.get() == "":
+                    warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                    warn_label.place(x=65, y=540)
+                else:
+                    student_id = int(student_id_entry.get().strip())
+                    flag = False
+                    for request in request_list:
+                        if request[0] == student_id:
+                            flag = True
+                            file = FileManager(request[6])
+                            file.open_file()
+                            break
+                    if not flag:
+                        warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                        warn_label.place(x=65, y=540)
+
+
+            open_first_page_btn = tk.Button(thesis_defense_request_frame, text="Open first page", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_first_page_btn_action)
+            open_first_page_btn.place(x=240, y=450, width=120, height=40)
+
+            def open_last_page_btn_action():
+                if student_id_entry.get() == "":
+                    warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                    warn_label.place(x=65, y=540)
+                else:
+                    student_id = int(student_id_entry.get().strip())
+                    flag = False
+                    for request in request_list:
+                        if request[0] == student_id:
+                            flag = True
+                            file = FileManager(request[7])
+                            file.open_file()
+                            break
+                    if not flag:
+                        warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                        warn_label.place(x=65, y=540)
+
+            open_last_page_btn = tk.Button(thesis_defense_request_frame, text="Open last page", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_last_page_btn_action)
+            open_last_page_btn.place(x=380, y=450, width=120, height=40)
+
+            def submit_btn_action():
+                student_id = student_id_entry.get()
+                print(var.get())
+                if var.get() == "accept":
+                    print(True)
+                elif var.get() == "reject":
+                    print(False)
+                # message = master_object.thesis_decision(student_id, var.get())
+                # message_label = tk.Label(thesis_request_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                # message_label.place(x=65, y=520)
+
+            submit_btn = tk.Button(thesis_defense_request_frame, text="Submit", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=submit_btn_action)
+            submit_btn.place(x=420, y=520, width=228, height=60)
+
+        thesis_defense_request_btn = tk.Button(left_frame, text="Thesis defense requests", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0,
+                                highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                command=thesis_defense_request_btn_action)
+        thesis_defense_request_btn.place(x=0, y=322, width=228, height=60)
+
+        # def take_thesis_action():
+        #     for widget in course_frame.winfo_children():
+        #         widget.destroy()
+        #     take_thesis_defense_frame.place_forget()
+        #     take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+        #     take_thesis_btn.config(bg=RIGHT_COLOR)
+        #     courses_btn.config(bg=BTN_COLOR)
+        #     take_thesis_defense_btn.config(bg=BTN_COLOR)
+        #
+        #     thesis_id_label = tk.Label(take_thesis_frame, text="Thesis id:", font=("Arial", 11), bg=RIGHT_COLOR,
+        #                                fg="white")
+        #     thesis_id_label.place(x=65, y=114)
+        #     thesis_id_entry = tk.Entry(take_thesis_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11),
+        #                                fg="white", bd=0, highlightthickness=0)
+        #     thesis_id_entry.place(x=135, y=105, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     left_line = tk.Canvas(take_thesis_frame, width=60, height=2, bg=LINE_COLOR, highlightthickness=0)
+        #     left_line.place(x=15, y=205)
+        #
+        #     thesis_id_label = tk.Label(take_thesis_frame, text="Request history", font=("Arial", 14), bg=RIGHT_COLOR,
+        #                                fg="white")
+        #     thesis_id_label.place(x=65, y=190)
+        #
+        #     right_line = tk.Canvas(take_thesis_frame, width=495, height=2, bg=LINE_COLOR, highlightthickness=0)
+        #     right_line.place(x=205, y=205)
+        #
+        #     status_tuple = student_object.status_print()
+        #     date_label = tk.Label(take_thesis_frame, text=f"Request date: {status_tuple[0]}", font=("Arial", 11),
+        #                           bg=RIGHT_COLOR, fg="white")
+        #     date_label.place(x=65, y=250)
+        #     status_label = tk.Label(take_thesis_frame, text=f"Status: {status_tuple[1]}", font=("Arial", 11),
+        #                             bg=RIGHT_COLOR, fg="white")
+        #     status_label.place(x=65, y=280)
+        #
+        #     def send_request_action():
+        #         input_id = thesis_id_entry.get().strip()
+        #         message = student_object.take_thesis(input_id)
+        #
+        #         message_label = tk.Label(take_thesis_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,
+        #                                  fg="white")
+        #         message_label.place(x=220, y=430)
+        #
+        #     send_request_btn = tk.Button(take_thesis_frame, text="Send request", font=("Arial", 11), bg=BTN_COLOR,
+        #                                  fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6",
+        #                                  cursor="hand2", command=send_request_action)
+        #     send_request_btn.place(x=65, y=500, width=228, height=60)
+        #
+        # take_thesis_btn = tk.Button(left_frame, text="Take thesis", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0,
+        #                             highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+        #                             command=take_thesis_action)
+        # take_thesis_btn.place(x=0, y=322, width=228, height=60)
+        #
+        # second_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        # second_line_between.place(x=0, y=382)
+        #
+        # def take_thesis_defense_action():
+        #     for widget in course_frame.winfo_children():
+        #         widget.destroy()
+        #     take_thesis_frame.place_forget()
+        #     take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+        #     take_thesis_defense_btn.config(bg=RIGHT_COLOR)
+        #     courses_btn.config(bg=BTN_COLOR)
+        #     take_thesis_btn.config(bg=BTN_COLOR)
+        #
+        #     title_label = tk.Label(take_thesis_defense_frame, text="Title:", font=("Arial", 11), bg=RIGHT_COLOR,
+        #                            fg="white")
+        #     title_label.place(x=65, y=44)
+        #     title_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                            font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     title_entry.place(x=135, y=35, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     abstract_label = tk.Label(take_thesis_defense_frame, text="Abstract:", font=("Arial", 11), bg=RIGHT_COLOR,
+        #                               fg="white")
+        #     abstract_label.place(x=65, y=99)
+        #     abstract_entry = tk.Text(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                              font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     abstract_entry.place(x=135, y=90, width=ENTRY_WIDTH, height=ENTRY_HEIGHT * 3)
+        #
+        #     keyword_label = tk.Label(take_thesis_defense_frame, text="keywords:", font=("Arial", 11), bg=RIGHT_COLOR,
+        #                              fg="white")
+        #     keyword_label.place(x=65, y=234)
+        #     keyword_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                              font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     keyword_entry.place(x=135, y=225, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     pdf_path_label = tk.Label(take_thesis_defense_frame, text="pdf path:", font=("Arial", 11), bg=RIGHT_COLOR,
+        #                               fg="white")
+        #     pdf_path_label.place(x=65, y=289)
+        #     pdf_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                               font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     pdf_path_entry.place(x=135, y=280, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     def pdf_path_browse_action():
+        #         pdf_path = filedialog.askopenfilename(
+        #             title="Select a file",
+        #             filetypes=[("PDF files", "*.pdf")]
+        #         )
+        #
+        #         if pdf_path:
+        #             pdf_path_entry.delete(0, tk.END)
+        #             pdf_path_entry.insert(0, pdf_path)
+        #
+        #     pdf_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11), bg=BTN_COLOR,
+        #                                     fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6",
+        #                                     cursor="hand2", command=pdf_path_browse_action)
+        #     pdf_path_browse_btn.place(x=450, y=280, width=80, height=ENTRY_HEIGHT)
+        #
+        #     first_page_path_label = tk.Label(take_thesis_defense_frame, text="First page path:", font=("Arial", 11),
+        #                                      bg=RIGHT_COLOR, fg="white")
+        #     first_page_path_label.place(x=65, y=344)
+        #     first_page_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                                      font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     first_page_path_entry.place(x=135, y=335, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     def first_page_path_browse_action():
+        #         first_page_path = filedialog.askopenfilename(
+        #             title="Select a file",
+        #             filetypes=[("Image files", "*.png;*.jpg;*.jpeg")]
+        #         )
+        #
+        #         if first_page_path:
+        #             first_page_path_entry.delete(0, tk.END)
+        #             first_page_path_entry.insert(0, first_page_path)
+        #
+        #     first_page_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11),
+        #                                            bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0,
+        #                                            activebackground="#ADD8E6", cursor="hand2",
+        #                                            command=first_page_path_browse_action)
+        #     first_page_path_browse_btn.place(x=450, y=335, width=80, height=ENTRY_HEIGHT)
+        #
+        #     last_page_path_label = tk.Label(take_thesis_defense_frame, text="Last page path:", font=("Arial", 11),
+        #                                     bg=RIGHT_COLOR, fg="white")
+        #     last_page_path_label.place(x=65, y=399)
+        #     last_page_path_entry = tk.Entry(take_thesis_defense_frame, bg=INPUT_COLOR, insertbackground="white",
+        #                                     font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+        #     last_page_path_entry.place(x=135, y=390, width=ENTRY_WIDTH, height=ENTRY_HEIGHT)
+        #
+        #     def last_page_path_browse_action():
+        #         last_page_path = filedialog.askopenfilename(
+        #             title="Select a file",
+        #             filetypes=[("Image files", "*.png;*.jpg;*.jpeg")]
+        #         )
+        #
+        #         if last_page_path:
+        #             last_page_path_entry.delete(0, tk.END)
+        #             last_page_path_entry.insert(0, last_page_path)
+        #
+        #     last_page_path_browse_btn = tk.Button(take_thesis_defense_frame, text="Browse", font=("Arial", 11),
+        #                                           bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0,
+        #                                           activebackground="#ADD8E6", cursor="hand2",
+        #                                           command=last_page_path_browse_action)
+        #     last_page_path_browse_btn.place(x=450, y=390, width=80, height=ENTRY_HEIGHT)
+        #
+        #     left_line = tk.Canvas(take_thesis_defense_frame, width=60, height=2, bg=LINE_COLOR, highlightthickness=0)
+        #     left_line.place(x=15, y=460)
+        #
+        #     thesis_id_label = tk.Label(take_thesis_defense_frame, text="Request history", font=("Arial", 14),
+        #                                bg=RIGHT_COLOR, fg="white")
+        #     thesis_id_label.place(x=65, y=445)
+        #
+        #     right_line = tk.Canvas(take_thesis_defense_frame, width=495, height=2, bg=LINE_COLOR, highlightthickness=0)
+        #     right_line.place(x=205, y=460)
+        #
+        #     status_tuple = student_object.status_print("thesis_defense")
+        #     date_label = tk.Label(take_thesis_defense_frame, text=f"Request date: {status_tuple[0]}",
+        #                           font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+        #     date_label.place(x=65, y=480)
+        #     status_label = tk.Label(take_thesis_defense_frame, text=f"Status: {status_tuple[1]}", font=("Arial", 11),
+        #                             bg=RIGHT_COLOR, fg="white")
+        #     status_label.place(x=65, y=505)
+        #
+        #     def send_request_action():
+        #         title = title_entry.get().strip()
+        #         abstract = abstract_entry.get("1.0", tk.END).strip()
+        #         keywords = keyword_entry.get().strip()
+        #         pdf_path = pdf_path_entry.get().strip()
+        #         first_page_path = first_page_path_entry.get().strip()
+        #         last_page_path = last_page_path_entry.get().strip()
+        #
+        #         message = student_object.take_thesis_defense(title, abstract, keywords, pdf_path, first_page_path,
+        #                                                      last_page_path)
+        #
+        #         message_label = tk.Label(take_thesis_defense_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,
+        #                                  fg="white")
+        #         message_label.place(x=65, y=570)
+        #
+        #     send_request_btn = tk.Button(take_thesis_defense_frame, text="Send request", font=("Arial", 11),
+        #                                  bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0,
+        #                                  activebackground="#ADD8E6", cursor="hand2", command=send_request_action)
+        #     send_request_btn.place(x=450, y=550, width=228, height=60)
+        #
+        # take_thesis_defense_btn = tk.Button(left_frame, text="take thesis defense", font=("Arial", 11), bg=BTN_COLOR,
+        #                                     fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6",
+        #                                     cursor="hand2", command=take_thesis_defense_action)
+        # take_thesis_defense_btn.place(x=0, y=384, width=228, height=60)
+        #
+        # # img = tk.PhotoImage(file="../resources/picture/usericon.png")
+        # # img_label = tk.Label(left_frame, image=img, bg=LEFT_COLOR)
+        # # img_label.place(x=0, y=0, width=50, height=50)
+        # # img_label.image = img
+        #
+        # # try:
+        # #     image = Image.open("../resources/picture/usericone.jpg")
+        # #     image = image.resize((50, 50))
+        # #     photo = ImageTk.PhotoImage(image)
+        # #
+        # #     icon_label = tk.Label(left_frame, image=photo, bg=LEFT_COLOR)
+        # #     icon_label.place(x=0, y=0, width=70, height=70)
+        # #     icon_label.image = photo
+        # # except Exception as e:
+        # #     print(f"Error: {e}")
+
+        # -----------------------right frames--------------------------------
+        right_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
+        right_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+
+        thesis_request_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
+
+
+        thesis_defense_request_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
+
+        #
+        # take_thesis_defense_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
+        # take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)

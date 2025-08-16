@@ -55,7 +55,7 @@ class Student:
         student_list = student_obj.file_reader()
         for student in student_list:
             if student["id"] == self.student_id:
-                if student["defense_request"]["status"] == "no_request":
+                if student["defense_request"]["status"] in ["no_request", "rejected"]:
                     if student["thesis_request"]["status"] == "accepted":
                         request_date = datetime.strptime(student["thesis_request"]["date"], "%d/%m/%Y").date()
                         date_now = datetime.now().date()
@@ -67,18 +67,29 @@ class Student:
                                 defense_id = defense_list[-1]["id"] + 1
                             else:
                                 defense_id = 1
+
+                            pdf_name = f"thesis_{defense_id}.pdf"
+                            first_page_extension = first_page_path[first_page_path.rfind(".") + 1:]
+                            first_page_name = f"first_page_{defense_id}.{first_page_extension}"
+                            last_pege_extension = last_page_path[last_page_path.rfind(".") + 1:]
+                            last_page_name = f"last_page_{defense_id}.{last_pege_extension}"
+
                             defense_dic = {
                                 "id": defense_id,
+                                "student_id": self.student_id,
+                                "student_name": student["name"],
                                 "title": title,
                                 "abstract": abstract,
                                 "keywords": keywords,
-                                "pdf_path": pdf_path,
-                                "first_page_path": first_page_path,
-                                "last_page_path": last_page_path,
+                                "pdf_name": pdf_name,
+                                "first_page_name": first_page_name,
+                                "last_page_name": last_page_name,
                                 "date": date_now_str
                             }
                             defense_list.append(defense_dic)
                             defense_obj.file_writer(defense_list)
+
+                            student_obj.save_thesis(pdf_path, pdf_name, first_page_path, first_page_name, last_page_path, last_page_name)
 
                             student["defense_request"]["status"] = "pending"
                             student["defense_request"]["date"] = date_now_str
@@ -92,20 +103,23 @@ class Student:
                                     master["defense_requests"].append({"requester_id": self.student_id, "date": date_now_str, "defense_id": defense_id})
                                     master_obj.file_writer(master_list)
                                     break
+                            return "The request was successfully send."
+                        return "Three months must have passed since the unit registration."
+                    return "Wait for master decision."
+                return "You reserved a thesis defense before."
 
-                        else:
-                            print("Three months must have passed since the unit registration.")
-                    else:
-                        print("Wait for master decision.")
-                else:
-                    print("You reserved a thesis defense before.")
-
-    def status_print(self):
+    def status_print(self, type = "thesis"):
         student_file = FileManager("../resources/data/Students.json")
         student_list = student_file.file_reader()
-        for student in student_list:
-            if student["id"] == self.student_id:
-                return student['thesis_request']['date'], student['thesis_request']['status']
+        if type == "thesis":
+            for student in student_list:
+                if student["id"] == self.student_id:
+                    return student['thesis_request']['date'], student['thesis_request']['status']
+        else:
+            for student in student_list:
+                if student["id"] == self.student_id:
+                    return student['defense_request']['date'], student['defense_request']['status']
+
 
     # def get_courses(self):
     #     course_obj = FileManager("../resources/data/Courses.json")
