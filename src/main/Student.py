@@ -41,7 +41,7 @@ class Student:
                             master_list = master_file.file_reader()
                             for master in master_list:
                                 if course["master_id"] == master["id"]:
-                                    master["capacity"]["advisor"] -= 1
+                                    # master["capacity"]["advisor"] -= 1
                                     master["thesis_requests"].append({"requester_id": self.student_id, "date": request_date})
                                     master_file.file_writer(master_list)
                                     break
@@ -86,21 +86,27 @@ class Student:
                                 "last_page_name": last_page_name,
                                 "date": date_now_str
                             }
-                            defense_list.append(defense_dic)
-                            defense_obj.file_writer(defense_list)
-
-                            student_obj.save_thesis(pdf_path, pdf_name, first_page_path, first_page_name, last_page_path, last_page_name)
 
                             student["defense_request"]["status"] = "pending"
                             student["defense_request"]["date"] = date_now_str
                             student["defense_request"]["defense_id"] = defense_id
-                            student_obj.file_writer(student_list)
 
                             master_obj = FileManager("../resources/data/Masters.json")
                             master_list = master_obj.file_reader()
                             for master in master_list:
                                 if master["id"] == student["thesis_request"]["master_id"]:
+                                    if master["capacity"]["advisor"] == 0:
+                                        return "The capacity if advisor is full."
+                                    master["capacity"]["advisor"] -= 1
                                     master["defense_requests"].append({"requester_id": self.student_id, "date": date_now_str, "defense_id": defense_id})
+
+                                    defense_list.append(defense_dic)
+                                    defense_obj.file_writer(defense_list)
+
+                                    student_obj.save_thesis(pdf_path, pdf_name, first_page_path, first_page_name, last_page_path, last_page_name)
+
+                                    student_obj.file_writer(student_list)
+
                                     master_obj.file_writer(master_list)
                                     break
                             return "The request was successfully send."

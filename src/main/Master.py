@@ -21,22 +21,18 @@ class Master:
                     print(request["requester_id"])
                     print(requester_id)
                     if request["requester_id"] == requester_id:
-                        print(2)
                         master["thesis_requests"].remove(master["thesis_requests"][index])
 
                         student_obj = FileManager("../resources/data/Students.json")
                         student_list = student_obj.file_reader()
                         for student in student_list:
                             if student["id"] == requester_id:
-                                print(3)
                                 if decision:
-                                    print(4)
                                     student["thesis_request"]["status"] = "accepted"
                                     student_obj.file_writer(student_list)
                                     master_obj.file_writer(master_list)
                                     return "The student was accepted."
                                 else:
-                                    print(5)
                                     student["thesis_request"]["status"] = "rejected"
 
                                     master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
@@ -45,7 +41,6 @@ class Master:
                                     course_list = course_obj.file_reader()
                                     for course in course_list:
                                         if course["id"] == student["thesis_request"]["course_id"]:
-                                            print(6)
                                             course["capacity"] = course["capacity"] + 1
                                             course_obj.file_writer(course_list)
                                             student_obj.file_writer(student_list)
@@ -55,7 +50,7 @@ class Master:
 
 
 
-    def thesis_defense_decision(self, requester_id, decision = True, ):
+    def thesis_defense_decision(self, requester_id, decision = True, internal_examiner_id = "", external_examiner_name = "", date = ""):
         master_obj = FileManager("../resources/data/Masters.json")
         master_list = master_obj.file_reader()
         print("1")
@@ -63,8 +58,8 @@ class Master:
             if master["id"] == self.master_id:
                 print("2")
                 request_list = master["defense_requests"]
-                index = 0
-                for request in request_list:
+
+                for index, request in enumerate(request_list):
                     if request["requester_id"] == requester_id:
                         print("3")
                         student_obj = FileManager("../resources/data/Students.json")
@@ -74,8 +69,18 @@ class Master:
                                 print("4")
                                 if decision:
                                     student["defense_request"]["status"] = "accepted"
-                                    print("5")
 
+                                    defense_obj = FileManager("../resources/data/Defenses.json")
+                                    defense_list = defense_obj.file_reader()
+                                    defense_list_copy = defense_list.copy()
+
+                                    defense_id = ""
+                                    for defense in defense_list_copy:
+                                        if defense["student_id"] == requester_id:
+                                            defense_id = defense["id"]
+                                            break
+
+                                    self.choose_examiner(requester_id, student["name"], defense_id, internal_examiner_id, external_examiner_name, date)
 
                                 else:
                                     print("6")
@@ -84,12 +89,12 @@ class Master:
                                     defense_obj = FileManager("../resources/data/Defenses.json")
                                     defense_list = defense_obj.file_reader()
                                     defense_list_copy = defense_list.copy()
-                                    defense_index = 0
-                                    for defense in defense_list_copy:
+
+                                    for defense_index, defense in enumerate(defense_list_copy):
                                         if defense["id"] == master["defense_requests"][index]["defense_id"]:
                                             defense_list.remove(defense_list[defense_index])
                                             break
-                                        defense_index += 1
+
 
                                     master["defense_requests"].remove(master["defense_requests"][index])
                                     master_obj.file_writer(master_list)
@@ -97,31 +102,37 @@ class Master:
                                     defense_obj.file_writer(defense_list)
                                 student_obj.file_writer(student_list)
 
-                index += 1
-
-    def choose_examiner(self, internal_examiner, external_examiner, date):
-        defense_date = datetime.strptime(date, "%d/%m/%Y").date()
+    def choose_examiner(self, requester_id, requester_name, defense_id, internal_examiner_id, external_examiner_name, date):
+        internal_examiner_id = int(internal_examiner_id)
+        try:
+            defense_date = datetime.strptime(date, "%d/%m/%Y").date()
+        except Exception as e:
+            print(e)
         now = datetime.now().date()
 
         if defense_date > now:
             master_obj = FileManager("../resources/data/Masters.json")
             master_list = master_obj.file_reader()
             for master in master_list:
-                if master["name"] == internal_examiner:
+                if master["id"] == internal_examiner_id:
                     if master["capacity"]["examiner"] != 0:
                         master["capacity"]["examiner"] = master["capacity"]["examiner"] - 1
 
                         dic = {
-
+                            "requester_id": requester_id,
+                            "requester_name": requester_name,
+                            "date": date,
+                            "defense_id": defense_id
                         }
 
-                    else:
-                        print("The internal master is busy.")
-                else:
-                    print("There is no such internal master.")
+                        master["examiner_defense"].append(dic)
 
-        else:
-            print("Invalid date.")
+                        for advisor in master_list:
+                            if advisor["id"] == self.master_id:
+                                advisor["defenses"].append(dic)
+                    return "The internal master is busy."
+                return "There is no such internal master."
+        return "Invalid date."
 
     def thesis_requests_print(self):
         student_id = ""
@@ -195,5 +206,6 @@ class Master:
                         date = defense["date"]
                         sub_tuple = (student_id, student_name, title, abstract, keywords, pdf_path, first_page_path, last_page_path, date)
                         final_list.append(sub_tuple)
+                        break
+            return final_list
 
-                        return final_list
