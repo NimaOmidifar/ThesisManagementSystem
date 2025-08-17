@@ -38,3 +38,7 @@ class FileManager:
             os.startfile(self.path)
         except Exception as e:
             print(e)
+
+    def delete_file(self):
+        path = os.path.join("..", "resources", "data", "theses", self.path)
+        os.remove(path)

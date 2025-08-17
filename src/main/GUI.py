@@ -215,8 +215,8 @@ class GUI():
         courses_btn = tk.Button(left_frame, text="Courses", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=courses_btn_action)
         courses_btn.place(x=0, y=260, width=228, height=60)
 
-        first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
-        first_line_between.place(x=0, y=320)
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=320)
 
         def take_thesis_action():
             for widget in course_frame.winfo_children():
@@ -441,16 +441,16 @@ class GUI():
         master_label.place(x=85, y=155)
 
         def thesis_request_btn_action():
-            # for widget in thesis_defense_request_frame.winfo_children():
-            #     widget.destroy()
             register_thesis_defense_grade_frame.place_forget()
             thesis_defense_request_frame.place_forget()
             register_external_examiner_grade_frame.place_forget()
+            theses_bank_frame.place_forget()
             thesis_request_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             thesis_request_btn.config(bg=RIGHT_COLOR)
             thesis_defense_request_btn.config(bg=BTN_COLOR)
             register_thesis_defense_grade_btn.config(bg=BTN_COLOR)
             register_external_examiner_grade_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
 
             canvas = tk.Canvas(thesis_request_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600, height=300)
             scrollbar = tk.Scrollbar(thesis_request_frame, orient="vertical", command=canvas.yview)
@@ -501,20 +501,20 @@ class GUI():
                                 command=thesis_request_btn_action)
         thesis_request_btn.place(x=0, y=260, width=228, height=60)
 
-        first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
-        first_line_between.place(x=0, y=320)
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=320)
 
         def thesis_defense_request_btn_action():
-            # for widget in thesis_request_frame.winfo_children():
-            #     widget.destroy()
             thesis_request_frame.place_forget()
             register_thesis_defense_grade_frame.place_forget()
             register_external_examiner_grade_frame.place_forget()
+            theses_bank_frame.place_forget()
             thesis_defense_request_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             thesis_defense_request_btn.config(bg=RIGHT_COLOR)
             thesis_request_btn.config(bg=BTN_COLOR)
             register_thesis_defense_grade_btn.config(bg=BTN_COLOR)
             register_external_examiner_grade_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
 
             canvas = tk.Canvas(thesis_defense_request_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600, height=300)
             scrollbar = tk.Scrollbar(thesis_defense_request_frame, orient="vertical", command=canvas.yview)
@@ -550,7 +550,7 @@ class GUI():
             def open_pdf_btn_action():
                 if student_id_entry.get() == "":
                     warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                    warn_label.place(x=65, y=540)
+                    warn_label.place(x=65, y=560)
                 else:
                     student_id = int(student_id_entry.get().strip())
                     flag = False
@@ -562,7 +562,7 @@ class GUI():
                             break
                     if not flag:
                         warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                        warn_label.place(x=65, y=540)
+                        warn_label.place(x=65, y=560)
 
 
             open_pdf_btn = tk.Button(thesis_defense_request_frame, text="Open pdf", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_pdf_btn_action)
@@ -571,7 +571,7 @@ class GUI():
             def open_first_page_btn_action():
                 if student_id_entry.get() == "":
                     warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                    warn_label.place(x=65, y=540)
+                    warn_label.place(x=65, y=560)
                 else:
                     student_id = int(student_id_entry.get().strip())
                     flag = False
@@ -583,7 +583,7 @@ class GUI():
                             break
                     if not flag:
                         warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                        warn_label.place(x=65, y=540)
+                        warn_label.place(x=65, y=560)
 
 
             open_first_page_btn = tk.Button(thesis_defense_request_frame, text="Open first page", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_first_page_btn_action)
@@ -592,7 +592,7 @@ class GUI():
             def open_last_page_btn_action():
                 if student_id_entry.get() == "":
                     warn_label = tk.Label(thesis_defense_request_frame, text="student id must not empty.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                    warn_label.place(x=65, y=540)
+                    warn_label.place(x=65, y=560)
                 else:
                     student_id = int(student_id_entry.get().strip())
                     flag = False
@@ -604,7 +604,7 @@ class GUI():
                             break
                     if not flag:
                         warn_label = tk.Label(thesis_defense_request_frame, text="There is no student with this id.", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-                        warn_label.place(x=65, y=540)
+                        warn_label.place(x=65, y=560)
 
             open_last_page_btn = tk.Button(thesis_defense_request_frame, text="Open last page", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=open_last_page_btn_action)
             open_last_page_btn.place(x=380, y=370, width=120, height=40)
@@ -624,17 +624,25 @@ class GUI():
             date_entry = tk.Entry(thesis_defense_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
             date_entry.place(x=110, y=491, width=165, height=ENTRY_HEIGHT)
 
+            date_label = tk.Label(thesis_defense_request_frame, text="example: 17/08/2025", font=("Arial", 9), bg=RIGHT_COLOR, fg="white")
+            date_label.place(x=280, y=500)
+
 
             def submit_btn_action():
-                student_id = student_id_entry.get()
+                student_id = student_id_entry.get().strip()
+                internal_examiner_id = internal_examiner_id_entry.get().strip()
+                external_examiner_id = external_examiner_id_entry.get().strip()
+                date = date_entry.get().strip()
 
                 decision = True
                 if combo.get() == "reject":
                     decision = False
-                message = master_object.thesis_defense_decision(student_id, decision)
+                    message = master_object.thesis_defense_decision(student_id, decision)
+                else:
+                    message = master_object.thesis_defense_decision(student_id, decision, internal_examiner_id, external_examiner_id, date)
 
                 message_label = tk.Label(thesis_defense_request_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,fg="white")
-                message_label.place(x=65, y=550)
+                message_label.place(x=65, y=570)
 
             submit_btn = tk.Button(thesis_defense_request_frame, text="Submit", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=submit_btn_action)
             submit_btn.place(x=420, y=550, width=228, height=60)
@@ -642,24 +650,71 @@ class GUI():
         thesis_defense_request_btn = tk.Button(left_frame, text="Thesis defense requests", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=thesis_defense_request_btn_action)
         thesis_defense_request_btn.place(x=0, y=322, width=228, height=60)
 
-        first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
-        first_line_between.place(x=0, y=382)
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=382)
 
         def register_thesis_defense_grade_btn_action():
             thesis_request_frame.place_forget()
             thesis_defense_request_frame.place_forget()
             register_external_examiner_grade_frame.place_forget()
+            theses_bank_frame.place_forget()
             register_thesis_defense_grade_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             register_thesis_defense_grade_btn.config(bg=RIGHT_COLOR)
             thesis_request_btn.config(bg=BTN_COLOR)
             thesis_defense_request_btn.config(bg=BTN_COLOR)
             register_external_examiner_grade_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(register_thesis_defense_grade_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600, height=300)
+            scrollbar = tk.Scrollbar(register_thesis_defense_grade_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            request_list = master_object.internal_examiner_defenses_print()
+            for request in request_list:
+                tk.Label(scrollable_frame, width=90,
+                         text=f"Defense id: {request[0]}\nStudent id: {request[1]}\nStudent name: {request[2]}\nExaminers name: {request[3]}",
+                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15, pady=7)
+
+            student_id_label = tk.Label(register_thesis_defense_grade_frame, text="Student id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            student_id_label.place(x=65, y=399)
+            student_id_entry = tk.Entry(register_thesis_defense_grade_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            student_id_entry.place(x=145, y=390, width=200, height=ENTRY_HEIGHT)
+
+            grade_label = tk.Label(register_thesis_defense_grade_frame, text="Grade:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            grade_label.place(x=385, y=399)
+            grade_entry = tk.Entry(register_thesis_defense_grade_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            grade_entry.place(x=440, y=390, width=200, height=ENTRY_HEIGHT)
+
+            def submit_btn_action():
+                student_id = student_id_entry.get().strip()
+                grade = grade_entry.get().strip()
+                message = master_object.register_thesis_defense_grade_internal(student_id, grade)
+
+                message_label = tk.Label(register_thesis_defense_grade_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,
+                                         fg="white")
+                message_label.place(x=65, y=520)
+
+            submit_btn = tk.Button(register_thesis_defense_grade_frame, text="Submit", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=submit_btn_action)
+            submit_btn.place(x=420, y=500, width=228, height=60)
 
         register_thesis_defense_grade_btn = tk.Button(left_frame, text="Register thesis defense grade", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=register_thesis_defense_grade_btn_action)
         register_thesis_defense_grade_btn.place(x=0, y=384, width=228, height=60)
 
-        first_line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
-        first_line_between.place(x=0, y=444)
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=444)
 
         def register_external_examiner_grade_btn_action():
             thesis_request_frame.place_forget()
@@ -670,9 +725,136 @@ class GUI():
             thesis_request_btn.config(bg=BTN_COLOR)
             thesis_defense_request_btn.config(bg=BTN_COLOR)
             register_thesis_defense_grade_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(register_external_examiner_grade_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600,
+                               height=300)
+            scrollbar = tk.Scrollbar(register_external_examiner_grade_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            request_list = master_object.external_examiner_defenses_print()
+            for request in request_list:
+                tk.Label(scrollable_frame, width=90,
+                         text=f"Defense id: {request[0]}\nStudent id: {request[1]}\nStudent name: {request[2]}\nExaminers name: {request[3]}",
+                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15, pady=7)
+
+            student_id_label = tk.Label(register_external_examiner_grade_frame, text="Student id:", font=("Arial", 11),
+                                        bg=RIGHT_COLOR, fg="white")
+            student_id_label.place(x=65, y=399)
+            student_id_entry = tk.Entry(register_external_examiner_grade_frame, bg=INPUT_COLOR, insertbackground="white",
+                                        font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            student_id_entry.place(x=145, y=390, width=200, height=ENTRY_HEIGHT)
+
+            grade_label = tk.Label(register_external_examiner_grade_frame, text="Grade:", font=("Arial", 11),
+                                   bg=RIGHT_COLOR, fg="white")
+            grade_label.place(x=385, y=399)
+            grade_entry = tk.Entry(register_external_examiner_grade_frame, bg=INPUT_COLOR, insertbackground="white",
+                                   font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            grade_entry.place(x=440, y=390, width=200, height=ENTRY_HEIGHT)
+
+            def submit_btn_action():
+                student_id = student_id_entry.get().strip()
+                grade = grade_entry.get().strip()
+                message = master_object.register_thesis_defense_grade_internal(student_id, grade)
+
+                message_label = tk.Label(register_external_examiner_grade_frame, text=message, font=("Arial", 11),
+                                         bg=RIGHT_COLOR,
+                                         fg="white")
+                message_label.place(x=65, y=520)
+
+            submit_btn = tk.Button(register_external_examiner_grade_frame, text="Submit", font=("Arial", 11), bg=BTN_COLOR,
+                                   fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                   command=submit_btn_action)
+            submit_btn.place(x=420, y=500, width=228, height=60)
 
         register_external_examiner_grade_btn = tk.Button(left_frame, text="Register external examiner grade", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=register_external_examiner_grade_btn_action)
         register_external_examiner_grade_btn.place(x=0, y=446, width=228, height=60)
+
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=506)
+
+        def theses_bank_btn_action():
+            thesis_request_frame.place_forget()
+            thesis_defense_request_frame.place_forget()
+            register_thesis_defense_grade_frame.place_forget()
+            register_external_examiner_grade_frame.place_forget()
+            theses_bank_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            theses_bank_btn.config(bg=RIGHT_COLOR)
+            thesis_request_btn.config(bg=BTN_COLOR)
+            thesis_defense_request_btn.config(bg=BTN_COLOR)
+            register_thesis_defense_grade_btn.config(bg=BTN_COLOR)
+            register_external_examiner_grade_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(theses_bank_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600,
+                               height=300)
+            scrollbar = tk.Scrollbar(theses_bank_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            request_list = master_object.external_examiner_defenses_print()
+            for request in request_list:
+                tk.Label(scrollable_frame, width=90,
+                         text=f"Defense id: {request[0]}\nStudent id: {request[1]}\nStudent name: {request[2]}\nExaminers name: {request[3]}",
+                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15, pady=7)
+
+            student_id_label = tk.Label(theses_bank_frame, text="Student id:", font=("Arial", 11),
+                                        bg=RIGHT_COLOR, fg="white")
+            student_id_label.place(x=65, y=399)
+            student_id_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR,
+                                        insertbackground="white",
+                                        font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            student_id_entry.place(x=145, y=390, width=200, height=ENTRY_HEIGHT)
+
+            grade_label = tk.Label(theses_bank_frame, text="Grade:", font=("Arial", 11),
+                                   bg=RIGHT_COLOR, fg="white")
+            grade_label.place(x=385, y=399)
+            grade_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                   font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            grade_entry.place(x=440, y=390, width=200, height=ENTRY_HEIGHT)
+
+            def submit_btn_action():
+                student_id = student_id_entry.get().strip()
+                grade = grade_entry.get().strip()
+                message = master_object.register_thesis_defense_grade_internal(student_id, grade)
+
+                message_label = tk.Label(theses_bank_frame, text=message, font=("Arial", 11),
+                                         bg=RIGHT_COLOR,
+                                         fg="white")
+                message_label.place(x=65, y=520)
+
+            submit_btn = tk.Button(theses_bank_frame, text="Submit", font=("Arial", 11),
+                                   bg=BTN_COLOR,
+                                   fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                   command=submit_btn_action)
+            submit_btn.place(x=420, y=500, width=228, height=60)
+
+        theses_bank_btn = tk.Button(left_frame, text="Theses Bank", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=theses_bank_btn_action)
+        theses_bank_btn.place(x=0, y=508, width=228, height=60)
 
 
         # -----------------------right frames--------------------------------
@@ -686,3 +868,5 @@ class GUI():
         register_thesis_defense_grade_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
 
         register_external_examiner_grade_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
+
+        theses_bank_frame = tk.Frame(master_form, bg=RIGHT_COLOR)
