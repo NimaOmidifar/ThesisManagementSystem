@@ -18,8 +18,6 @@ class Master:
             if master["id"] == self.master_id:
                 request_list = master["thesis_requests"]
                 for index, request in enumerate(request_list):
-                    print(request["requester_id"])
-                    print(requester_id)
                     if request["requester_id"] == requester_id:
                         master["thesis_requests"].remove(master["thesis_requests"][index])
 
@@ -35,7 +33,7 @@ class Master:
                                 else:
                                     student["thesis_request"]["status"] = "rejected"
 
-                                    master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
+                                    # master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
 
                                     course_obj = FileManager("../resources/data/Courses.json")
                                     course_list = course_obj.file_reader()
@@ -198,10 +196,12 @@ class Master:
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
                                         advisor_list = advisor_obj.file_reader()
+                                        advisor_name = ""
                                         for advisor in advisor_list:
                                             for index, defense_req in enumerate(advisor["defenses"]):
                                                 if defense_req["requester_id"] == requester_id:
                                                     advisor["defenses"].remove(defense_req)
+                                                    advisor_name = advisor["name"]
                                                     break
                                         defense_obj = FileManager("../resources/data/Defenses.json")
                                         defense_list = defense_obj.file_reader()
@@ -210,6 +210,7 @@ class Master:
                                         for defense in defense_list_copy:
                                             if defense["student_id"] == requester_id:
                                                 dic = defense
+                                                dic["master"] = advisor_name
                                                 dic[
                                                     "examiners"] = f"{request["internal_examiner_name"]}, {request['external_examiner_name']}"
                                                 score = ""
@@ -310,6 +311,7 @@ class Master:
                                         for defense in defense_list_copy:
                                             if defense["student_id"] == requester_id:
                                                 dic = defense
+                                                dic["master"] = master["name"]
                                                 dic[
                                                     "examiners"] = f"{request["internal_examiner_name"]}, {request['external_examiner_name']}"
                                                 score = ""
@@ -338,14 +340,28 @@ class Master:
                                         student["defense_result"]["result"] = "rejected"
 
                                         defense_date = defense_date + timedelta(days=30)
+                                        print(request["date"])
                                         request["date"] = defense_date.strftime("%d/%m/%Y")
+                                        print(request["date"])
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
                                         advisor_list = advisor_obj.file_reader()
                                         for advisor in advisor_list:
                                             if advisor["name"] == request["internal_examiner_name"]:
-                                                advisor["examiner_defense"]["date"] = defense_date.strftime("%d/%m/%Y")
-                                                break
+                                                print(advisor["name"])
+                                                print(request["internal_examiner_name"])
+                                                for defense in advisor["examiner_defense"]:
+                                                    print(defense["requester_id"])
+                                                    print(requester_id)
+                                                    if defense["requester_id"] == requester_id:
+                                                        print(defense["date"])
+                                                        defense["date"] = defense_date.strftime("%d/%m/%Y")
+                                                        break
+
+                                        # for defenses in master["defenses"]:
+                                        #     if defenses["requester_id"] == requester_id:
+                                        #         defenses["date"] = defense_date.strftime("%d/%m/%Y")
+                                        #         break
 
                                         student["defense_result"]["next_date"] = defense_date.strftime("%d/%m/%Y")
 
@@ -431,7 +447,7 @@ class Master:
                         sub_tuple = (student_id, student_name, title, abstract, keywords, pdf_path, first_page_path, last_page_path, date)
                         final_list.append(sub_tuple)
                         break
-            return final_list
+        return final_list
 
     def internal_examiner_defenses_print(self):
         final_list = []

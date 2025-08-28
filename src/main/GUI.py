@@ -9,6 +9,7 @@ from src.main.FileManager import FileManager
 from src.main.LoginAndChangePass import LoginAndChangePass
 from src.main.Master import Master
 from src.main.Student import Student
+from src.main.ThesisSearch import ThesisSearch
 
 
 class GUI():
@@ -130,11 +131,13 @@ class GUI():
                 name = login.get_name()
                 student = Student(id, password)
                 self.student_page(name, student)
+                root.destroy()
 
             elif login.login(password, "master"):
                 name = login.get_name()
                 master = Master(id, password)
                 self.master_page(name, master)
+                root.destroy()
             else:
                 warn_label = tk.Label(login_frame, text="There is no such user!", font=("Arial", 11), bg=FORM_COLOR,fg="red")
                 warn_label.place(x=125, y=310)
@@ -182,10 +185,12 @@ class GUI():
         def courses_btn_action():
             take_thesis_frame.place_forget()
             take_thesis_defense_frame.place_forget()
+            theses_bank_frame.place_forget()
             course_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             courses_btn.config(bg=RIGHT_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
             take_thesis_defense_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
 
 
             canvas = tk.Canvas(course_frame, bg=RIGHT_COLOR, highlightthickness=0)
@@ -222,10 +227,12 @@ class GUI():
             for widget in course_frame.winfo_children():
                 widget.destroy()
             take_thesis_defense_frame.place_forget()
+            theses_bank_frame.place_forget()
             take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
             take_thesis_defense_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
 
             thesis_id_label = tk.Label(take_thesis_frame, text="Thesis id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
             thesis_id_label.place(x=65, y=114)
@@ -267,10 +274,12 @@ class GUI():
             for widget in course_frame.winfo_children():
                 widget.destroy()
             take_thesis_frame.place_forget()
+            theses_bank_frame.place_forget()
             take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_defense_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
 
             title_label = tk.Label(take_thesis_defense_frame, text="Title:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
             title_label.place(x=65, y=44)
@@ -383,8 +392,9 @@ class GUI():
         # img_label.image = img
 
         # try:
+        #     global image
         #     image = Image.open("../resources/picture/usericone.jpg")
-        #     image = image.resize((50, 50))
+        #     image = image.resize((50, 50), Image.Resampling.LANCZOS)
         #     photo = ImageTk.PhotoImage(image)
         #
         #     icon_label = tk.Label(left_frame, image=photo, bg=LEFT_COLOR)
@@ -392,6 +402,127 @@ class GUI():
         #     icon_label.image = photo
         # except Exception as e:
         #     print(f"Error: {e}")
+
+        # try:
+        #     image = Image.open("../resources/picture/background.png")
+        #     image = image.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
+        #     photo = ImageTk.PhotoImage(image)
+        #
+        #     bg_label = tk.Label(root, image=photo)
+        #     bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        #     bg_label.image = photo
+        # except Exception as e:
+        #     print(f"Error: {e}")
+
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=444)
+
+        def theses_bank_btn_action():
+            for widget in course_frame.winfo_children():
+                widget.destroy()
+            take_thesis_frame.place_forget()
+            take_thesis_defense_frame.place_forget()
+            theses_bank_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            theses_bank_btn.config(bg=RIGHT_COLOR)
+            courses_btn.config(bg=BTN_COLOR)
+            take_thesis_btn.config(bg=BTN_COLOR)
+            take_thesis_defense_btn.config(bg=BTN_COLOR)
+
+            canvas = tk.Canvas(theses_bank_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600,
+                               height=300)
+            scrollbar = tk.Scrollbar(theses_bank_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=RIGHT_COLOR)
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(
+                    scrollregion=canvas.bbox("all")
+                )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.place(x=20, y=20, width=620, height=350)
+            scrollbar.place(x=670, y=20, width=15, height=350)
+
+            defenses_list = ThesisSearch("", "", "", "", "", "").print_all()
+            for defense in defenses_list:
+                tk.Label(scrollable_frame, width=90,
+                         text=f"Title: {defense[0]}\nAbstract: {defense[1]}\nKeywords: {defense[2]}\nAuthor id: {defense[3]}\nAuthor: {defense[4]}\ndate: {defense[5]}\nexaminers: {defense[6]}\nmaster: {defense[7]}\nscore: {defense[8]}",
+                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15,
+                                                                                                        pady=7)
+
+            title_label = tk.Label(theses_bank_frame, text="Title:", font=("Arial", 11),
+                                   bg=RIGHT_COLOR, fg="white")
+            title_label.place(x=15, y=399)
+            title_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR,
+                                   insertbackground="white",
+                                   font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            title_entry.place(x=55, y=390, width=140, height=ENTRY_HEIGHT)
+
+            master_name_label = tk.Label(theses_bank_frame, text="Master name:", font=("Arial", 11),
+                                         bg=RIGHT_COLOR, fg="white")
+            master_name_label.place(x=220, y=399)
+            master_name_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                         font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            master_name_entry.place(x=320, y=390, width=140, height=ENTRY_HEIGHT)
+
+            keyword_label = tk.Label(theses_bank_frame, text="Keyword:", font=("Arial", 11),
+                                     bg=RIGHT_COLOR, fg="white")
+            keyword_label.place(x=485, y=399)
+            keyword_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                     font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            keyword_entry.place(x=555, y=390, width=140, height=ENTRY_HEIGHT)
+
+            author_label = tk.Label(theses_bank_frame, text="Author:", font=("Arial", 11),
+                                    bg=RIGHT_COLOR, fg="white")
+            author_label.place(x=15, y=467)
+            author_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                    font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            author_entry.place(x=70, y=460, width=140, height=ENTRY_HEIGHT)
+
+            year_label = tk.Label(theses_bank_frame, text="Year:", font=("Arial", 11),
+                                  bg=RIGHT_COLOR, fg="white")
+            year_label.place(x=230, y=467)
+            year_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                  font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            year_entry.place(x=275, y=460, width=140, height=ENTRY_HEIGHT)
+
+            examiner_label = tk.Label(theses_bank_frame, text="Examiner:", font=("Arial", 11),
+                                      bg=RIGHT_COLOR, fg="white")
+            examiner_label.place(x=440, y=467)
+            examiner_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                      font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            examiner_entry.place(x=520, y=460, width=140, height=ENTRY_HEIGHT)
+
+            def search_btn_action():
+                for widget in scrollable_frame.winfo_children():
+                    widget.destroy()
+                title = title_entry.get().strip()
+                master_name = master_name_entry.get().strip()
+                keyword = keyword_entry.get().strip()
+                author = author_entry.get().strip()
+                year = year_entry.get().strip()
+                examiner = examiner_entry.get().strip()
+
+                defenses_list = ThesisSearch(title, master_name, keyword, author, year, examiner).search()
+                for defense in defenses_list:
+                    tk.Label(scrollable_frame, width=90,
+                             text=f"Title: {defense[0]}\nAbstract: {defense[1]}\nKeywords: {defense[2]}\nAuthor id: {defense[3]}\nAuthor: {defense[4]}\ndate: {defense[5]}\nexaminers: {defense[6]}\nmaster: {defense[7]}\nscore: {defense[8]}",
+                             font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15,
+                                                                                                            pady=7)
+
+            search_btn = tk.Button(theses_bank_frame, text="Search", font=("Arial", 11),
+                                   bg=BTN_COLOR,
+                                   fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                   command=search_btn_action)
+            search_btn.place(x=420, y=550, width=228, height=60)
+
+        theses_bank_btn = tk.Button(left_frame, text="Theses Bank", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0,
+                                    highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                    command=theses_bank_btn_action)
+        theses_bank_btn.place(x=0, y=446, width=228, height=60)
 
         # -----------------------right frames--------------------------------
         right_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
@@ -404,6 +535,8 @@ class GUI():
 
         take_thesis_defense_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
         take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+
+        theses_bank_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
 
 
     def master_page(self, name, master_object):
@@ -768,7 +901,7 @@ class GUI():
             def submit_btn_action():
                 student_id = student_id_entry.get().strip()
                 grade = grade_entry.get().strip()
-                message = master_object.register_thesis_defense_grade_internal(student_id, grade)
+                message = master_object.register_thesis_defense_grade_external(student_id, grade)
 
                 message_label = tk.Label(register_external_examiner_grade_frame, text=message, font=("Arial", 11),
                                          bg=RIGHT_COLOR,
@@ -816,42 +949,78 @@ class GUI():
             canvas.place(x=20, y=20, width=620, height=350)
             scrollbar.place(x=670, y=20, width=15, height=350)
 
-            request_list = master_object.external_examiner_defenses_print()
-            for request in request_list:
+            defenses_list = ThesisSearch("", "", "", "", "", "").print_all()
+            for defense in defenses_list:
                 tk.Label(scrollable_frame, width=90,
-                         text=f"Defense id: {request[0]}\nStudent id: {request[1]}\nStudent name: {request[2]}\nExaminers name: {request[3]}",
-                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15, pady=7)
+                         text=f"Title: {defense[0]}\nAbstract: {defense[1]}\nKeywords: {defense[2]}\nAuthor id: {defense[3]}\nAuthor: {defense[4]}\ndate: {defense[5]}\nexaminers: {defense[6]}\nmaster: {defense[7]}\nscore: {defense[8]}",
+                         font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15,
+                                                                                                        pady=7)
 
-            student_id_label = tk.Label(theses_bank_frame, text="Student id:", font=("Arial", 11),
+            title_label = tk.Label(theses_bank_frame, text="Title:", font=("Arial", 11),
                                         bg=RIGHT_COLOR, fg="white")
-            student_id_label.place(x=65, y=399)
-            student_id_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR,
+            title_label.place(x=15, y=399)
+            title_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR,
                                         insertbackground="white",
                                         font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
-            student_id_entry.place(x=145, y=390, width=200, height=ENTRY_HEIGHT)
+            title_entry.place(x=55, y=390, width=140, height=ENTRY_HEIGHT)
 
-            grade_label = tk.Label(theses_bank_frame, text="Grade:", font=("Arial", 11),
+            master_name_label = tk.Label(theses_bank_frame, text="Master name:", font=("Arial", 11),
                                    bg=RIGHT_COLOR, fg="white")
-            grade_label.place(x=385, y=399)
-            grade_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+            master_name_label.place(x=220, y=399)
+            master_name_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
                                    font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
-            grade_entry.place(x=440, y=390, width=200, height=ENTRY_HEIGHT)
+            master_name_entry.place(x=320, y=390, width=140, height=ENTRY_HEIGHT)
 
-            def submit_btn_action():
-                student_id = student_id_entry.get().strip()
-                grade = grade_entry.get().strip()
-                message = master_object.register_thesis_defense_grade_internal(student_id, grade)
+            keyword_label = tk.Label(theses_bank_frame, text="Keyword:", font=("Arial", 11),
+                                         bg=RIGHT_COLOR, fg="white")
+            keyword_label.place(x=485, y=399)
+            keyword_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                         font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            keyword_entry.place(x=555, y=390, width=140, height=ENTRY_HEIGHT)
 
-                message_label = tk.Label(theses_bank_frame, text=message, font=("Arial", 11),
-                                         bg=RIGHT_COLOR,
-                                         fg="white")
-                message_label.place(x=65, y=520)
+            author_label = tk.Label(theses_bank_frame, text="Author:", font=("Arial", 11),
+                                     bg=RIGHT_COLOR, fg="white")
+            author_label.place(x=15, y=467)
+            author_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                     font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            author_entry.place(x=70, y=460, width=140, height=ENTRY_HEIGHT)
 
-            submit_btn = tk.Button(theses_bank_frame, text="Submit", font=("Arial", 11),
+            year_label = tk.Label(theses_bank_frame, text="Year:", font=("Arial", 11),
+                                    bg=RIGHT_COLOR, fg="white")
+            year_label.place(x=230, y=467)
+            year_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                    font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            year_entry.place(x=275, y=460, width=140, height=ENTRY_HEIGHT)
+
+            examiner_label = tk.Label(theses_bank_frame, text="Examiner:", font=("Arial", 11),
+                                  bg=RIGHT_COLOR, fg="white")
+            examiner_label.place(x=440, y=467)
+            examiner_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                  font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            examiner_entry.place(x=520, y=460, width=140, height=ENTRY_HEIGHT)
+
+            def search_btn_action():
+                for widget in scrollable_frame.winfo_children():
+                    widget.destroy()
+                title = title_entry.get().strip()
+                master_name = master_name_entry.get().strip()
+                keyword = keyword_entry.get().strip()
+                author = author_entry.get().strip()
+                year = year_entry.get().strip()
+                examiner = examiner_entry.get().strip()
+
+                defenses_list = ThesisSearch(title, master_name, keyword, author, year, examiner).search()
+                for defense in defenses_list:
+                    tk.Label(scrollable_frame, width=90,
+                             text=f"Title: {defense[0]}\nAbstract: {defense[1]}\nKeywords: {defense[2]}\nAuthor id: {defense[3]}\nAuthor: {defense[4]}\ndate: {defense[5]}\nexaminers: {defense[6]}\nmaster: {defense[7]}\nscore: {defense[8]}",
+                             font=("Arial", 9), anchor="w", bg=LEFT_COLOR, fg="white", justify="left").pack(padx=15,
+                                                                                                            pady=7)
+
+            search_btn = tk.Button(theses_bank_frame, text="Search", font=("Arial", 11),
                                    bg=BTN_COLOR,
                                    fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
-                                   command=submit_btn_action)
-            submit_btn.place(x=420, y=500, width=228, height=60)
+                                   command=search_btn_action)
+            search_btn.place(x=420, y=550, width=228, height=60)
 
         theses_bank_btn = tk.Button(left_frame, text="Theses Bank", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=theses_bank_btn_action)
         theses_bank_btn.place(x=0, y=508, width=228, height=60)

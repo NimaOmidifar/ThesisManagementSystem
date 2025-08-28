@@ -1,4 +1,7 @@
+import hashlib
+
 from src.main.FileManager import FileManager
+
 
 
 class LoginAndChangePass:
@@ -17,7 +20,8 @@ class LoginAndChangePass:
 
         for users in user_list:
             if users["id"] == self.user_id:
-                if users["password"] == password:
+                hashed_password = hashlib.sha256(password.encode()).hexdigest()
+                if users["password"] == hashed_password:
                     name = users["name"]
                     return True
 
@@ -36,7 +40,8 @@ class LoginAndChangePass:
 
         for users in user_list:
             if users["id"] == self.user_id:
-                users["password"] = new_password
+                hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+                users["password"] = hashed_password
                 file_obj.file_writer(user_list)
                 return True
 
