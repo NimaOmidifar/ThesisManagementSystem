@@ -127,13 +127,37 @@ class Student:
                     return student['defense_request']['date'], student['defense_request']['status']
 
 
-    # def get_courses(self):
-    #     course_obj = FileManager("../resources/data/Courses.json")
-    #     course_list = course_obj.file_reader()
-    #     return course_list
-        # for course in course_list:
-        #     print(f"id: {course['id']}\ntitle: {course['title']}\nmaster: {course['master']}\nyear: {course['year']}\nsemester: {course['semester']}\ncapacity: {course['capacity']}")
-        #     for _ in course['resources']:
-        #         print(_, end = ", ")
-        #     print(f"\nsessions: {course['sessions']}\nunits: {course['units']}")
-        #     print("-----------------------------------")
+    def final_status_print(self):
+        master_name = " "
+        internal_examiner_grade = " "
+        external_examiner_grade = " "
+        final_grade = " "
+        status = " "
+        next_date = " "
+        final_list = []
+
+        student_file = FileManager("../resources/data/Students.json")
+        student_list = student_file.file_reader()
+        for student in student_list:
+            if student["id"] == self.student_id:
+                master_file = FileManager("../resources/data/Masters.json")
+                master_list = master_file.file_reader()
+                for master in master_list:
+                    if master["id"] == student["thesis_request"]["master_id"]:
+                        master_name = master["name"]
+                        break
+
+                internal_examiner_grade = student["defense_result"]["internal_examiner_grade"]
+                external_examiner_grade = student["defense_result"]["external_examiner_grade"]
+                final_grade = student["defense_result"]["final_grade"]
+                status = student["defense_result"]["result"]
+                next_date = student["defense_result"]["next_date"]
+                final_list.append(master_name)
+                final_list.append(internal_examiner_grade)
+                final_list.append(external_examiner_grade)
+                final_list.append(final_grade)
+                final_list.append(status)
+                final_list.append(next_date)
+                break
+
+        return final_list

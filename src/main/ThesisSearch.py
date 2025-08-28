@@ -47,6 +47,9 @@ class ThesisSearch:
                     elif key == "examiners":
                         if self.examiner in value:
                             flag = True
+                    elif key == "keywords":
+                        if self.keyword in value:
+                            flag = True
                     elif  value == requested_dic[key]:
                         flag = True
 
@@ -58,7 +61,7 @@ class ThesisSearch:
                         author = successful_defenses["student_name"]
                         date = successful_defenses["date"]
                         examiners = successful_defenses["examiners"]
-                        master = successful_defenses["examiners"]
+                        master = successful_defenses["master"]
                         score = successful_defenses["score"]
                         sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score)
                         final_list.append(sub_tuple)
@@ -78,7 +81,7 @@ class ThesisSearch:
             author = successful_defenses["student_name"]
             date = successful_defenses["date"]
             examiners = successful_defenses["examiners"]
-            master = successful_defenses["examiners"]
+            master = successful_defenses["master"]
             score = successful_defenses["score"]
             sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score)
             final_list.append(sub_tuple)

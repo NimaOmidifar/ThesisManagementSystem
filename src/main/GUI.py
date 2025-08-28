@@ -186,10 +186,12 @@ class GUI():
             take_thesis_frame.place_forget()
             take_thesis_defense_frame.place_forget()
             theses_bank_frame.place_forget()
+            thesis_defense_result_frame.place_forget()
             course_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             courses_btn.config(bg=RIGHT_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
             take_thesis_defense_btn.config(bg=BTN_COLOR)
+            thesis_defense_result_btn.config(bg=BTN_COLOR)
             theses_bank_btn.config(bg=BTN_COLOR)
 
 
@@ -228,10 +230,12 @@ class GUI():
                 widget.destroy()
             take_thesis_defense_frame.place_forget()
             theses_bank_frame.place_forget()
+            thesis_defense_result_frame.place_forget()
             take_thesis_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
             take_thesis_defense_btn.config(bg=BTN_COLOR)
+            thesis_defense_result_btn.config(bg=BTN_COLOR)
             theses_bank_btn.config(bg=BTN_COLOR)
 
             thesis_id_label = tk.Label(take_thesis_frame, text="Thesis id:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
@@ -275,10 +279,12 @@ class GUI():
                 widget.destroy()
             take_thesis_frame.place_forget()
             theses_bank_frame.place_forget()
+            thesis_defense_result_frame.place_forget()
             take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             take_thesis_defense_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
+            thesis_defense_result_btn.config(bg=BTN_COLOR)
             theses_bank_btn.config(bg=BTN_COLOR)
 
             title_label = tk.Label(take_thesis_defense_frame, text="Title:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
@@ -417,15 +423,67 @@ class GUI():
         line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
         line_between.place(x=0, y=444)
 
+        def thesis_defense_result_btn_action():
+            for widget in course_frame.winfo_children():
+                widget.destroy()
+            take_thesis_frame.place_forget()
+            theses_bank_frame.place_forget()
+            take_thesis_defense_frame.place_forget()
+            thesis_defense_result_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+            thesis_defense_result_btn.config(bg=RIGHT_COLOR)
+            courses_btn.config(bg=BTN_COLOR)
+            take_thesis_btn.config(bg=BTN_COLOR)
+            take_thesis_defense_btn.config(bg=BTN_COLOR)
+            theses_bank_btn.config(bg=BTN_COLOR)
+
+            left_line = tk.Canvas(thesis_defense_result_frame, width=60, height=2, bg=LINE_COLOR, highlightthickness=0)
+            left_line.place(x=15, y=40)
+
+            thesis_id_label = tk.Label(thesis_defense_result_frame, text="Defense history", font=("Arial", 14),
+                                       bg=RIGHT_COLOR, fg="white")
+            thesis_id_label.place(x=65, y=25)
+
+            right_line = tk.Canvas(thesis_defense_result_frame, width=495, height=2, bg=LINE_COLOR,
+                                   highlightthickness=0)
+            right_line.place(x=205, y=40)
+
+            status_list = student_object.final_status_print()
+
+            title_label = tk.Label(thesis_defense_result_frame, text=f"Master: {status_list[0]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            title_label.place(x=65, y=75)
+
+            abstract_label = tk.Label(thesis_defense_result_frame, text=f"internal examiner grade: {status_list[1]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            abstract_label.place(x=65, y=110)
+
+            keyword_label = tk.Label(thesis_defense_result_frame, text=f"external examiner grade: {status_list[2]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            keyword_label.place(x=65, y=145)
+
+            pdf_path_label = tk.Label(thesis_defense_result_frame, text=f"Final grade: {status_list[3]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            pdf_path_label.place(x=65, y=180)
+
+            first_page_path_label = tk.Label(thesis_defense_result_frame, text=f"Status: {status_list[4]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            first_page_path_label.place(x=65, y=215)
+
+            last_page_path_label = tk.Label(thesis_defense_result_frame, text=f"Next date: {status_list[5]}", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            last_page_path_label.place(x=65, y=250)
+
+        thesis_defense_result_btn = tk.Button(left_frame, text="Thesis defense result", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=thesis_defense_result_btn_action)
+        thesis_defense_result_btn.place(x=0, y=446, width=228, height=60)
+
+        line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
+        line_between.place(x=0, y=506)
+
         def theses_bank_btn_action():
             for widget in course_frame.winfo_children():
                 widget.destroy()
             take_thesis_frame.place_forget()
             take_thesis_defense_frame.place_forget()
+            thesis_defense_result_frame.place_forget()
             theses_bank_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             theses_bank_btn.config(bg=RIGHT_COLOR)
             courses_btn.config(bg=BTN_COLOR)
             take_thesis_btn.config(bg=BTN_COLOR)
+            thesis_defense_result_btn.config(bg=BTN_COLOR)
             take_thesis_defense_btn.config(bg=BTN_COLOR)
 
             canvas = tk.Canvas(theses_bank_frame, bg=RIGHT_COLOR, highlightthickness=0, width=600,
@@ -522,7 +580,7 @@ class GUI():
         theses_bank_btn = tk.Button(left_frame, text="Theses Bank", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0,
                                     highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
                                     command=theses_bank_btn_action)
-        theses_bank_btn.place(x=0, y=446, width=228, height=60)
+        theses_bank_btn.place(x=0, y=508, width=228, height=60)
 
         # -----------------------right frames--------------------------------
         right_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
@@ -535,6 +593,9 @@ class GUI():
 
         take_thesis_defense_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
         take_thesis_defense_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
+
+        thesis_defense_result_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
+        thesis_defense_result_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
 
         theses_bank_frame = tk.Frame(student_form, bg=RIGHT_COLOR)
 
@@ -747,10 +808,10 @@ class GUI():
             internal_examiner_id_entry = tk.Entry(thesis_defense_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
             internal_examiner_id_entry.place(x=205, y=436, width=70, height=ENTRY_HEIGHT)
 
-            external_examiner_id_label = tk.Label(thesis_defense_request_frame, text="External examiner name:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
-            external_examiner_id_label.place(x=320, y=445)
-            external_examiner_id_entry = tk.Entry(thesis_defense_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
-            external_examiner_id_entry.place(x=490, y=436, width=150, height=ENTRY_HEIGHT)
+            external_examiner_name_label = tk.Label(thesis_defense_request_frame, text="External examiner name:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+            external_examiner_name_label.place(x=320, y=445)
+            external_examiner_name_entry = tk.Entry(thesis_defense_request_frame, bg=INPUT_COLOR, insertbackground="white", font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            external_examiner_name_entry.place(x=490, y=436, width=150, height=ENTRY_HEIGHT)
 
             date_label = tk.Label(thesis_defense_request_frame, text="Date:", font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
             date_label.place(x=65, y=500)
@@ -764,7 +825,7 @@ class GUI():
             def submit_btn_action():
                 student_id = student_id_entry.get().strip()
                 internal_examiner_id = internal_examiner_id_entry.get().strip()
-                external_examiner_id = external_examiner_id_entry.get().strip()
+                external_examiner_name = external_examiner_name_entry.get().strip()
                 date = date_entry.get().strip()
 
                 decision = True
@@ -772,7 +833,7 @@ class GUI():
                     decision = False
                     message = master_object.thesis_defense_decision(student_id, decision)
                 else:
-                    message = master_object.thesis_defense_decision(student_id, decision, internal_examiner_id, external_examiner_id, date)
+                    message = master_object.thesis_defense_decision(student_id, decision, internal_examiner_id, external_examiner_name, date)
 
                 message_label = tk.Label(thesis_defense_request_frame, text=message, font=("Arial", 11), bg=RIGHT_COLOR,fg="white")
                 message_label.place(x=65, y=570)

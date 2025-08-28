@@ -140,7 +140,7 @@ class Master:
                                 dic = {
                                     "requester_id": requester_id,
                                     "requester_name": requester_name,
-                                    "internal_examiner_name": advisor["name"],
+                                    "internal_examiner_name": master["name"],
                                     "external_examiner_name": external_examiner_name,
                                     "date": date,
                                     "defense_id": defense_id
@@ -240,17 +240,20 @@ class Master:
 
                                         defense_date = defense_date + timedelta(days=30)
                                         request["date"] = defense_date.strftime("%d/%m/%Y")
+                                        master_obj.file_writer(master_list)
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
                                         advisor_list = advisor_obj.file_reader()
                                         for advisor in advisor_list:
-                                            if advisor["name"] == request["external_examiner_name"]:
-                                                advisor["defenses"]["date"] = defense_date.strftime("%d/%m/%Y")
-                                                break
+                                            if advisor["id"] == student["thesis_request"]["master_id"]:
+                                                for defense in advisor["defenses"]:
+                                                    if defense["requester_id"] == requester_id:
+                                                        defense["date"] = defense_date.strftime("%d/%m/%Y")
+                                                        break
 
                                         student["defense_result"]["next_date"] = defense_date.strftime("%d/%m/%Y")
 
-                                        master_obj.file_writer(master_list)
+
                                         student_obj.file_writer(student_list)
                                         advisor_obj.file_writer(advisor_list)
                                         return "Grade successfully recorded."
@@ -340,32 +343,20 @@ class Master:
                                         student["defense_result"]["result"] = "rejected"
 
                                         defense_date = defense_date + timedelta(days=30)
-                                        print(request["date"])
                                         request["date"] = defense_date.strftime("%d/%m/%Y")
-                                        print(request["date"])
+                                        master_obj.file_writer(master_list)
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
                                         advisor_list = advisor_obj.file_reader()
                                         for advisor in advisor_list:
                                             if advisor["name"] == request["internal_examiner_name"]:
-                                                print(advisor["name"])
-                                                print(request["internal_examiner_name"])
                                                 for defense in advisor["examiner_defense"]:
-                                                    print(defense["requester_id"])
-                                                    print(requester_id)
                                                     if defense["requester_id"] == requester_id:
-                                                        print(defense["date"])
                                                         defense["date"] = defense_date.strftime("%d/%m/%Y")
                                                         break
 
-                                        # for defenses in master["defenses"]:
-                                        #     if defenses["requester_id"] == requester_id:
-                                        #         defenses["date"] = defense_date.strftime("%d/%m/%Y")
-                                        #         break
-
                                         student["defense_result"]["next_date"] = defense_date.strftime("%d/%m/%Y")
 
-                                        master_obj.file_writer(master_list)
                                         student_obj.file_writer(student_list)
                                         advisor_obj.file_writer(advisor_list)
                                         return "Grade successfully recorded."
