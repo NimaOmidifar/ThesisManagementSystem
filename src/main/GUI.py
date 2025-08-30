@@ -1,15 +1,11 @@
 import tkinter as tk
-from doctest import master
 from tkinter import filedialog, ttk
-
 from PIL import Image, ImageTk
-from pyexpat.errors import messages
-
-from src.main.FileManager import FileManager
-from src.main.LoginAndChangePass import LoginAndChangePass
-from src.main.Master import Master
-from src.main.Student import Student
-from src.main.ThesisSearch import ThesisSearch
+from FileManager import *
+from LoginAndChangePass import *
+from Master import *
+from Student import *
+from ThesisSearch import *
 
 
 class GUI():
@@ -392,34 +388,6 @@ class GUI():
         take_thesis_defense_btn = tk.Button(left_frame, text="take thesis defense", font=("Arial", 11), bg=BTN_COLOR, fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2", command=take_thesis_defense_action)
         take_thesis_defense_btn.place(x=0, y=384, width=228, height=60)
 
-        # img = tk.PhotoImage(file="../resources/picture/usericon.png")
-        # img_label = tk.Label(left_frame, image=img, bg=LEFT_COLOR)
-        # img_label.place(x=0, y=0, width=50, height=50)
-        # img_label.image = img
-
-        # try:
-        #     global image
-        #     image = Image.open("../resources/picture/usericone.jpg")
-        #     image = image.resize((50, 50), Image.Resampling.LANCZOS)
-        #     photo = ImageTk.PhotoImage(image)
-        #
-        #     icon_label = tk.Label(left_frame, image=photo, bg=LEFT_COLOR)
-        #     icon_label.place(x=0, y=0, width=70, height=70)
-        #     icon_label.image = photo
-        # except Exception as e:
-        #     print(f"Error: {e}")
-
-        # try:
-        #     image = Image.open("../resources/picture/background.png")
-        #     image = image.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-        #     photo = ImageTk.PhotoImage(image)
-        #
-        #     bg_label = tk.Label(root, image=photo)
-        #     bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-        #     bg_label.image = photo
-        # except Exception as e:
-        #     print(f"Error: {e}")
-
         line_between = tk.Canvas(left_frame, width=230, height=2, bg=LINE_COLOR, highlightthickness=0)
         line_between.place(x=0, y=444)
 
@@ -553,6 +521,38 @@ class GUI():
             examiner_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
                                       font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
             examiner_entry.place(x=520, y=460, width=140, height=ENTRY_HEIGHT)
+
+            author_id_label = tk.Label(theses_bank_frame, text="Author id:", font=("Arial", 11),
+                                       bg=RIGHT_COLOR, fg="white")
+            author_id_label.place(x=15, y=567)
+            author_id_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                       font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            author_id_entry.place(x=85, y=560, width=100, height=ENTRY_HEIGHT)
+
+            def open_pdf_btn_action():
+                if author_id_entry.get() == "":
+                    warn_label = tk.Label(theses_bank_frame, text="author id must not empty.",
+                                          font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                    warn_label.place(x=15, y=610)
+                else:
+                    author_id = int(author_id_entry.get().strip())
+                    flag = False
+                    for defense in defenses_list:
+                        if defense[3] == author_id:
+                            flag = True
+                            file = FileManager(defense[9])
+                            file.open_file()
+                            break
+                    if not flag:
+                        warn_label = tk.Label(theses_bank_frame, text="There is no author with this id.",
+                                              font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                        warn_label.place(x=15, y=610)
+
+            open_pdf_btn = tk.Button(theses_bank_frame, text="Open pdf", font=("Arial", 11),
+                                     bg=BTN_COLOR,
+                                     fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                     command=open_pdf_btn_action)
+            open_pdf_btn.place(x=200, y=560, width=100, height=ENTRY_HEIGHT)
 
             def search_btn_action():
                 for widget in scrollable_frame.winfo_children():
@@ -914,6 +914,7 @@ class GUI():
             thesis_request_frame.place_forget()
             thesis_defense_request_frame.place_forget()
             register_thesis_defense_grade_frame.place_forget()
+            theses_bank_frame.place_forget()
             register_external_examiner_grade_frame.place(x=230, y=0, width=WIDTH - 230, height=HEIGHT)
             register_external_examiner_grade_btn.config(bg=RIGHT_COLOR)
             thesis_request_btn.config(bg=BTN_COLOR)
@@ -1059,6 +1060,38 @@ class GUI():
             examiner_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
                                   font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
             examiner_entry.place(x=520, y=460, width=140, height=ENTRY_HEIGHT)
+
+            author_id_label = tk.Label(theses_bank_frame, text="Author id:", font=("Arial", 11),
+                                      bg=RIGHT_COLOR, fg="white")
+            author_id_label.place(x=15, y=567)
+            author_id_entry = tk.Entry(theses_bank_frame, bg=INPUT_COLOR, insertbackground="white",
+                                      font=("Arial", 11), fg="white", bd=0, highlightthickness=0)
+            author_id_entry.place(x=85, y=560, width=100, height=ENTRY_HEIGHT)
+
+            def open_pdf_btn_action():
+                if author_id_entry.get() == "":
+                    warn_label = tk.Label(theses_bank_frame, text="author id must not empty.",
+                                          font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                    warn_label.place(x=15, y=610)
+                else:
+                    author_id = int(author_id_entry.get().strip())
+                    flag = False
+                    for defense in defenses_list:
+                        if defense[3] == author_id:
+                            flag = True
+                            file = FileManager(defense[9])
+                            file.open_file()
+                            break
+                    if not flag:
+                        warn_label = tk.Label(theses_bank_frame, text="There is no author with this id.",
+                                              font=("Arial", 11), bg=RIGHT_COLOR, fg="white")
+                        warn_label.place(x=15, y=610)
+
+            open_pdf_btn = tk.Button(theses_bank_frame, text="Open pdf", font=("Arial", 11),
+                                   bg=BTN_COLOR,
+                                   fg="white", bd=0, highlightthickness=0, activebackground="#ADD8E6", cursor="hand2",
+                                   command=open_pdf_btn_action)
+            open_pdf_btn.place(x=200, y=560, width=100, height=ENTRY_HEIGHT)
 
             def search_btn_action():
                 for widget in scrollable_frame.winfo_children():

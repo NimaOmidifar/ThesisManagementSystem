@@ -1,6 +1,6 @@
 import hashlib
 
-from src.main.FileManager import FileManager
+from FileManager import *
 
 
 

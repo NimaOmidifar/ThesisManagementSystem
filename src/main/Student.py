@@ -1,8 +1,6 @@
 from datetime import datetime
-from doctest import master
-
-from src.main.FileManager import FileManager
-from src.main.LoginAndChangePass import LoginAndChangePass
+from FileManager import *
+from LoginAndChangePass import *
 
 class Student:
     def __init__(self, student_id, password):
@@ -41,7 +39,6 @@ class Student:
                             master_list = master_file.file_reader()
                             for master in master_list:
                                 if course["master_id"] == master["id"]:
-                                    # master["capacity"]["advisor"] -= 1
                                     master["thesis_requests"].append({"requester_id": self.student_id, "date": request_date})
                                     master_file.file_writer(master_list)
                                     break

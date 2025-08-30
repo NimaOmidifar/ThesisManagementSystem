@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from src.main.FileManager import FileManager
+from FileManager import *
 
 
 class ThesisSearch:
@@ -63,7 +62,8 @@ class ThesisSearch:
                         examiners = successful_defenses["examiners"]
                         master = successful_defenses["master"]
                         score = successful_defenses["score"]
-                        sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score)
+                        pdf_name = successful_defenses["pdf_name"]
+                        sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score, pdf_name)
                         final_list.append(sub_tuple)
 
         return final_list
@@ -83,7 +83,8 @@ class ThesisSearch:
             examiners = successful_defenses["examiners"]
             master = successful_defenses["master"]
             score = successful_defenses["score"]
-            sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score)
+            pdf_name = successful_defenses["pdf_name"]
+            sub_tuple = (title, abstract, keywords, author_id, author, date, examiners, master, score, pdf_name)
             final_list.append(sub_tuple)
 
         return final_list

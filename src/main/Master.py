@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
-from doctest import master
-
-from src.main.FileManager import FileManager
+from FileManager import *
 
 
 class Master:
@@ -32,8 +30,6 @@ class Master:
                                     return "The student was accepted."
                                 else:
                                     student["thesis_request"]["status"] = "rejected"
-
-                                    # master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
 
                                     course_obj = FileManager("../resources/data/Courses.json")
                                     course_list = course_obj.file_reader()
@@ -192,6 +188,7 @@ class Master:
                                         student["defense_result"]["result"] = "accepted"
 
                                         master["examiner_defense"].remove(request)
+                                        master["capacity"]["examiner"] = master["capacity"]["examiner"] + 1
                                         master_obj.file_writer(master_list)
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
@@ -201,6 +198,7 @@ class Master:
                                             for index, defense_req in enumerate(advisor["defenses"]):
                                                 if defense_req["requester_id"] == requester_id:
                                                     advisor["defenses"].remove(defense_req)
+                                                    advisor["capacity"]["advisor"] = advisor["capacity"]["advisor"] + 1
                                                     advisor_name = advisor["name"]
                                                     break
                                         defense_obj = FileManager("../resources/data/Defenses.json")
@@ -298,6 +296,7 @@ class Master:
                                         student["defense_result"]["result"] = "accepted"
 
                                         master["defenses"].remove(request)
+                                        master["capacity"]["advisor"] = master["capacity"]["advisor"] + 1
                                         master_obj.file_writer(master_list)
 
                                         advisor_obj = FileManager("../resources/data/Masters.json")
@@ -306,6 +305,7 @@ class Master:
                                             for index, defense_req in enumerate(advisor["examiner_defense"]):
                                                 if defense_req["requester_id"] == requester_id:
                                                     advisor["examiner_defense"].remove(defense_req)
+                                                    advisor["capacity"]["examiner"] = advisor["capacity"]["examiner"] + 1
                                                     break
                                         defense_obj = FileManager("../resources/data/Defenses.json")
                                         defense_list = defense_obj.file_reader()
